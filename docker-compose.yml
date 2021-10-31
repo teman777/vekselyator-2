@@ -1,0 +1,15 @@
+version: "3.3"
+services:
+        bot-db-server:
+                build: ./db
+               
+                ports:
+                        - "3306:3306" 
+                volumes:
+                        - ./db/data_volume:/var/lib/mysql
+
+
+
+
+                
+                
