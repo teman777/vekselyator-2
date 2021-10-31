@@ -57,6 +57,7 @@ public class ChatService {
         } else {
             tgChat = new TgChat();
             tgChat.setId(chatID);
+            chatRepository.save(tgChat);
         }
 
         if (!tgChat.isUserExists(userID)) {
@@ -64,7 +65,6 @@ public class ChatService {
             uc.setChat(tgChat);
             uc.setUser(tgUser);
             tgChat.addUser(uc);
-            chatRepository.save(tgChat);
             userChatRepository.save(uc);
         }
     }
