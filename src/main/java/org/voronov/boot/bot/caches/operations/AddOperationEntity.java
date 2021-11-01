@@ -1,19 +1,23 @@
 package org.voronov.boot.bot.caches.operations;
 
 import org.voronov.boot.bot.caches.core.CachedEntity;
+import org.voronov.boot.bot.model.dto.TgUser;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class AddOperationEntity extends CachedEntity {
     private List<Long> to;
-    private Long from;
-    private Long chat;
-    private Double qty;
+    private long from;
+    private long chat;
+    private double qty;
     private String comment;
+    private Type type = Type.FOR_ONE;
 
     public AddOperationEntity() {
-        this.to = new ArrayList<>();
+        super();
+        this.to = Collections.synchronizedList(new ArrayList<>());
     }
 
     public void addTo(Long to) {
@@ -28,11 +32,11 @@ public class AddOperationEntity extends CachedEntity {
         this.to = to;
     }
 
-    public Long getFrom() {
+    public long getFrom() {
         return from;
     }
 
-    public void setFrom(Long from) {
+    public void setFrom(long from) {
         this.from = from;
     }
 
@@ -58,5 +62,29 @@ public class AddOperationEntity extends CachedEntity {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public enum Type {
+        DIVIDE_TO_ALL(0),
+        NOT_DIVIDE(1),
+        FOR_ONE(2);
+
+        private final int code;
+
+        Type(int code) {
+            this.code = code;
+        }
+
+        public int getCode() {
+            return code;
+        }
     }
 }

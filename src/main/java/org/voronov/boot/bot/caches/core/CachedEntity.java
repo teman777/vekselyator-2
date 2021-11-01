@@ -5,6 +5,10 @@ import java.util.UUID;
 public abstract class CachedEntity {
     private UUID id;
 
+    public CachedEntity() {
+        id = UUID.randomUUID();
+    }
+
     public UUID getId() {
         return id;
     }
