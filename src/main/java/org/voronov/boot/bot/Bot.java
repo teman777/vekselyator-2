@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.voronov.boot.bot.commands.AddOperationCommand;
 import org.voronov.boot.bot.commands.HelpCommand;
 import org.voronov.boot.bot.commands.StartCommand;
 
@@ -20,18 +21,21 @@ public class Bot extends TelegramLongPollingCommandBot {
     private String token;
 
     private StartCommand startCommand;
-    //private HelpCommand helpCommand;
+    private HelpCommand helpCommand;
+    private AddOperationCommand addOperationCommand;
 
     @Autowired
-    public Bot(StartCommand startCommand) {
+    public Bot(StartCommand startCommand, HelpCommand helpCommand, AddOperationCommand addOperationCommand) {
         this.startCommand = startCommand;
-        //this.helpCommand = helpCommand;
+        this.helpCommand = helpCommand;
+        this.addOperationCommand = addOperationCommand;
         registerAllCommands();
     }
 
     private void registerAllCommands() {
         register(startCommand);
-        //register(helpCommand);
+        register(helpCommand);
+        register(addOperationCommand);
     }
 
     @Override

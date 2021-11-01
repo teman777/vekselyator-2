@@ -3,6 +3,7 @@ package org.voronov.boot.bot.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.voronov.boot.bot.exceptions.NoChatException;
 import org.voronov.boot.bot.model.dto.TgChat;
 import org.voronov.boot.bot.model.dto.TgUser;
 import org.voronov.boot.bot.model.dto.UserChat;
@@ -10,6 +11,7 @@ import org.voronov.boot.bot.model.repositories.ChatRepository;
 import org.voronov.boot.bot.model.repositories.UserChatRepository;
 import org.voronov.boot.bot.model.repositories.UserRepository;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Service
@@ -33,7 +35,8 @@ public class ChatService {
         return userRepository.findById(userID);
     }
 
-    public void registerUserForChat(Long chatID, Long userID, String userBrief) {
+    @Transactional
+    public void registerUserForChat(Long chatID, Long userID, String userBrief) throws NoChatException {
         Optional<TgChat> chat = findChat(chatID);
         Optional<TgUser> user = findUser(userID);
         TgChat tgChat;

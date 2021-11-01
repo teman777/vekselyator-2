@@ -8,6 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.voronov.boot.bot.exceptions.NoChatException;
 import org.voronov.boot.bot.services.ChatService;
 
 @Component
@@ -28,8 +29,17 @@ public class StartCommand extends BotCommand {
                 brief += " " + user.getLastName();
             }
         }
-        chatService.registerUserForChat(chat.getId(), user.getId(), brief);
-        SendMessage sm = new SendMessage(String.valueOf(chat.getId()), "Зарегал, а теперь пшол нахуй");
+
+        SendMessage sm;
+
+        try {
+            chatService.registerUserForChat(chat.getId(), user.getId(), brief);
+            sm = new SendMessage(String.valueOf(chat.getId()), "Зарегал");
+        } catch (NoChatException e) {
+            //todo logging
+            e.printStackTrace();
+            sm = new SendMessage(String.valueOf(chat.getId()), "Произошла какая-то ебала, я вас не зарегал :(");
+        }
 
         try {
             absSender.execute(sm);

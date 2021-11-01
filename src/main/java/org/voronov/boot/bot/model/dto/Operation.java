@@ -17,6 +17,9 @@ public class Operation {
     @JoinColumn(name = "UTo", referencedColumnName = "ID")
     private TgUser userTo;
 
+    @Column(name = "Qty")
+    private Double qty;
+
 
     public Long getId() {
         return id;
@@ -40,5 +43,13 @@ public class Operation {
 
     public void setUserTo(TgUser userTo) {
         this.userTo = userTo;
+    }
+
+    public Double getQty() {
+        return qty;
+    }
+
+    public void setQty(Double qty) {
+        this.qty = qty;
     }
 }
