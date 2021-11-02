@@ -26,6 +26,10 @@ public class AddButtonBuilder {
         switch (stage) {
             case ADDING_TO:
                 return buildAddingTo(entity);
+            case SETTING_TYPE:
+                return buildSettingType(entity);
+            case SETTING_QTY:
+                return buildSettingQty(entity);
             default:
                 return null;
         }
@@ -40,6 +44,42 @@ public class AddButtonBuilder {
         return markup;
     }
 
+    private InlineKeyboardMarkup buildSettingType(AddOperationEntity entity) {
+        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> result = new ArrayList<>();
+        result.add(buildTypes(entity));
+        result.add(buildOnlyCancel(entity));
+        markup.setKeyboard(result);
+        return markup;
+    }
+
+    private InlineKeyboardMarkup buildSettingQty(AddOperationEntity entity) {
+        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> result = new ArrayList<>();
+        result.add(buildOnlyCancel(entity));
+        markup.setKeyboard(result);
+        return markup;
+    }
+
+    private List<InlineKeyboardButton> buildTypes(AddOperationEntity entity) {
+        List<InlineKeyboardButton> buttons = new ArrayList<>();
+        InlineKeyboardButton firstType = new InlineKeyboardButton("Делим на всех");
+        firstType.setCallbackData("settype/0/" + entity.getId().toString());
+        InlineKeyboardButton secondType = new InlineKeyboardButton("С каждого по");
+        firstType.setCallbackData("settype/1/" + entity.getId().toString());
+        buttons.add(firstType);
+        buttons.add(secondType);
+        return buttons;
+    }
+
+    private List<InlineKeyboardButton> buildOnlyCancel(AddOperationEntity entity) {
+        List<InlineKeyboardButton> buttons = new ArrayList<>();
+        InlineKeyboardButton cancel = new InlineKeyboardButton("Отмена");
+        cancel.setCallbackData("cancel/" + entity.getId().toString());
+        buttons.add(cancel);
+        return buttons;
+    }
+
     private List<InlineKeyboardButton> buildUsers(AddOperationEntity entity) {
         List<InlineKeyboardButton> buttons = new ArrayList<>();
         Optional<TgChat> chat = chatRepository.findById(entity.getChat());
@@ -52,7 +92,7 @@ public class AddButtonBuilder {
                 String text = user.getBrief();
                 String callback = "adduser/" + user.getId().toString() + "/" + entity.getId().toString();
                 if (entity.getTo().contains(user.getId())) {
-                    text += " " + Character.toChars(2705);
+                    text += " " + new String(Character.toChars(0x2705));
                     callback.replace("adduser", "deluser");
                 }
                 InlineKeyboardButton button = new InlineKeyboardButton(text);
