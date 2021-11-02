@@ -66,7 +66,7 @@ public class AddButtonBuilder {
         InlineKeyboardButton firstType = new InlineKeyboardButton("Делим на всех");
         firstType.setCallbackData("settype/0/" + entity.getId().toString());
         InlineKeyboardButton secondType = new InlineKeyboardButton("С каждого по");
-        firstType.setCallbackData("settype/1/" + entity.getId().toString());
+        secondType.setCallbackData("settype/1/" + entity.getId().toString());
         buttons.add(firstType);
         buttons.add(secondType);
         return buttons;
