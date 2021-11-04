@@ -1,5 +1,6 @@
 package org.voronov.boot.bot;
 
+import org.aspectj.weaver.ast.Call;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -53,14 +54,15 @@ public class Bot extends TelegramLongPollingCommandBot {
     public void processNonCommandUpdate(Update update) {
         if (update.hasCallbackQuery()) {
             //handling callback query
-            handleCallback(update.getCallbackQuery());
+            handleCallback(update);
         } else if (update.getMessage().isReply()) {
             //handling reply
             handleReply(update.getMessage());
         }
     }
 
-    private void handleCallback(CallbackQuery query) {
+    private void handleCallback(Update update) {
+        CallbackQuery query = update.getCallbackQuery();
         String command = query.getData().split("/")[0];
         if (AddOperationCommand.INLINE_COMMANDS.contains(command)){
             addOperationCommand.handleInline(query, this);

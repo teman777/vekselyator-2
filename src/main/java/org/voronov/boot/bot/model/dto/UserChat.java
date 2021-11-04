@@ -3,13 +3,13 @@ package org.voronov.boot.bot.model.dto;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Table(name = "UserChatRelation")
-public class UserChat {
-    @EmbeddedId
-    private Key id;
+public class UserChat implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ChatID")
@@ -20,9 +20,8 @@ public class UserChat {
     private TgUser user;
 
     @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "ChatID", referencedColumnName = "ChatID")
-    @JoinColumn(name = "UFrom", referencedColumnName = "UserID")
-    @JoinColumn(name = "UTo", referencedColumnName = "UserID")
+    @JoinColumn(name = "UTo", referencedColumnName = "ID")
+    @JoinColumn(name = "UFrom", referencedColumnName = "ID")
     private List<Operation> operations;
 
     public TgChat getChat() {
@@ -49,31 +48,11 @@ public class UserChat {
         this.operations = operations;
     }
 
-    @Embeddable
-    public class Key implements Serializable {
-        private Long chatId;
-        private Long userId;
+    public Long getId() {
+        return id;
+    }
 
-        public Key() {
-
-        }
-
-        public Key(Long chatId, Long userId) {
-            this.chatId = chatId;
-            this.userId = userId;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof Key)) return false;
-            Key key = (Key) o;
-            return Objects.equals(chatId, key.chatId) && Objects.equals(userId, key.userId);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(chatId, userId);
-        }
+    public void setId(Long id) {
+        this.id = id;
     }
 }

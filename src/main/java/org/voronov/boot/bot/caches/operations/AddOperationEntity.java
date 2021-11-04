@@ -24,6 +24,10 @@ public class AddOperationEntity extends CachedEntity {
         this.to.add(to);
     }
 
+    public void deleteFromTo(Long to) {
+        this.to.remove(to);
+    }
+
     public List<Long> getTo() {
         return to;
     }

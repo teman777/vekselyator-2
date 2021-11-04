@@ -2,26 +2,25 @@ package org.voronov.boot.bot.model.dto;
 
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "Operations")
-public class Operation {
+public class Operation implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "Qty")
     private Double qty;
 
     @ManyToOne
-    @JoinColumn(name = "ChatID", referencedColumnName = "ChatID", insertable = false, updatable = false)
-    @JoinColumn(name = "UTo", referencedColumnName = "UserID", insertable = false, updatable = false)
-    private UserChat userChatTo;
+    @JoinColumn(name = "UTo", referencedColumnName = "ID")
+    private UserChat uTo;
 
     @ManyToOne
-    @JoinColumn(name = "ChatID", referencedColumnName = "ChatID", insertable = false, updatable = false)
-    @JoinColumn(name = "UFrom", referencedColumnName = "UserID", insertable = false, updatable = false)
-    private UserChat userChatFrom;
+    @JoinColumn(name = "UFrom", referencedColumnName = "ID")
+    private UserChat uFrom;
 
 
     public Long getId() {
@@ -40,19 +39,19 @@ public class Operation {
         this.qty = qty;
     }
 
-    public UserChat getUserChatTo() {
-        return userChatTo;
+    public UserChat getuTo() {
+        return uTo;
     }
 
-    public void setUserChatTo(UserChat userChatTo) {
-        this.userChatTo = userChatTo;
+    public void setuTo(UserChat uTo) {
+        this.uTo = uTo;
     }
 
-    public UserChat getUserChatFrom() {
-        return userChatFrom;
+    public UserChat getuFrom() {
+        return uFrom;
     }
 
-    public void setUserChatFrom(UserChat userChatFrom) {
-        this.userChatFrom = userChatFrom;
+    public void setuFrom(UserChat uFrom) {
+        this.uFrom = uFrom;
     }
 }

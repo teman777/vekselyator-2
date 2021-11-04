@@ -1,31 +1,33 @@
 create DATABASE if not exists vekselyator CHARACTER SET utf8 COLLATE utf8_general_ci;
 use vekselyator;
 create table if not exists Users            
-            (ID NUMERIC(30, 0)  unique primary key 
+            (ID bigint unique
             ,Brief varchar(50)
+            ,PRIMARY KEY (ID)
             );
             
 
 create table if not exists Chats
-            (ID NUMERIC(30, 0) unique primary key);
+            (ID bigint unique
+            ,PRIMARY KEY (ID));
 
 create table if not exists UserChatRelation
-            (ChatID NUMERIC(30, 0)
-            ,UserID NUMERIC(30, 0)
-            ,PRIMARY KEY (ChatID, UserID)
+            (ID bigint AUTO_INCREMENT
+            ,ChatID bigint
+            ,UserID bigint
+            ,PRIMARY KEY (ID)
             ,FOREIGN KEY (ChatID) references Chats(ID)
             ,FOREIGN KEY (UserID) references Users(ID));
             
 create table if not exists Operations
-            (ID     int primary key AUTO_INCREMENT
-            ,UFrom  NUMERIC(30, 0) 
-            ,UTo    NUMERIC(30, 0)
+            (ID     bigint AUTO_INCREMENT
+            ,UFrom  bigint
+            ,UTo    bigint
             ,Qty    NUMERIC(20, 2)
-            ,ChatID NUMERIC(30, 0)
             ,Date   datetime
             ,Comment varchar(255)
-            ,FOREIGN KEY (UFrom)  references  Users(ID)
-            ,FOREIGN KEY (UTo)    references  Users(ID)
-            ,FOREIGN KEY (ChatID) references  Chats(ID)
+            ,PRIMARY KEY (ID)
+            ,FOREIGN KEY (UFrom)  references  UserChatRelation(ID)
+            ,FOREIGN KEY (UTo)    references  UserChatRelation(ID)
             );
 commit;

@@ -1,7 +1,7 @@
-package org.voronov.boot.bot.commands.buttons;
+package org.voronov.boot.bot.services.buttons;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.voronov.boot.bot.caches.operations.AddOperationEntity;
@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Component
-public class AddButtonBuilder {
+@Service
+public class AddButtonBuilderService {
 
     @Autowired
     private ChatRepository chatRepository;
@@ -93,7 +93,7 @@ public class AddButtonBuilder {
                 String callback = "adduser/" + user.getId().toString() + "/" + entity.getId().toString();
                 if (entity.getTo().contains(user.getId())) {
                     text += " " + new String(Character.toChars(0x2705));
-                    callback.replace("adduser", "deluser");
+                    callback = callback.replace("adduser", "deluser");
                 }
                 InlineKeyboardButton button = new InlineKeyboardButton(text);
                 button.setCallbackData(callback);
