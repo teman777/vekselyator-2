@@ -10,9 +10,9 @@ create table if not exists Chats
             (ID NUMERIC(30, 0) unique primary key);
 
 create table if not exists UserChatRelation
-            (ID int primary key AUTO_INCREMENT
-            ,ChatID NUMERIC(30, 0) 
+            (ChatID NUMERIC(30, 0)
             ,UserID NUMERIC(30, 0)
+            ,PRIMARY KEY (ChatID, UserID)
             ,FOREIGN KEY (ChatID) references Chats(ID)
             ,FOREIGN KEY (UserID) references Users(ID));
             
