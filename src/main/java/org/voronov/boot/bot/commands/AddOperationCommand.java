@@ -14,11 +14,14 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.voronov.boot.bot.caches.operations.AddOperationCache;
 import org.voronov.boot.bot.caches.operations.AddOperationEntity;
+import org.voronov.boot.bot.services.ChatService;
 import org.voronov.boot.bot.services.buttons.AddButtonBuilderService;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Component
 public class AddOperationCommand extends BotCommand {
@@ -28,6 +31,9 @@ public class AddOperationCommand extends BotCommand {
 
     @Autowired
     private AddButtonBuilderService buttonBuilder;
+
+    @Autowired
+    private ChatService chatService;
 
 
 
@@ -57,6 +63,29 @@ public class AddOperationCommand extends BotCommand {
     }
 
     public void handleReply(Message message, AbsSender bot) {
+        String text = message.getText();
+        boolean check = text.matches("\\d+\\.?\\d*\\s?.*");
+        if (check) {
+            String onlyQty = text.replaceAll("\\s+.*", "");
+            String comment = text.replaceFirst("\\d+\\.?\\d*\\s?", "");
+            Double qty = Double.valueOf(onlyQty);
+
+            String id = message.getReplyToMessage().getReplyMarkup().getKeyboard().get(0).get(0).getCallbackData().split("/")[1];
+            AddOperationEntity entity = cache.getFromCache(UUID.fromString(id));
+            entity.setQty(qty);
+            entity.setComment(comment);
+
+            chatService.createOperationFromEntity(entity);
+
+            EditMessageText edit = EditMessageText.builder()
+                    .chatId(message.getChat().getId().toString())
+                    .text("Вексель добавлен")
+                    .messageId(message.getReplyToMessage().getMessageId())
+                    .build();
+            
+            send(edit, bot);
+        }
+
 
     }
 

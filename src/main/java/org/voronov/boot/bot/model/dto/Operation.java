@@ -3,6 +3,7 @@ package org.voronov.boot.bot.model.dto;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 
 @Entity
 @Table(name = "Operations")
@@ -22,6 +23,11 @@ public class Operation implements Serializable {
     @JoinColumn(name = "UFrom", referencedColumnName = "ID")
     private UserChat uFrom;
 
+    @Column(name = "Comment")
+    private String comment;
+
+    @Column(name = "Date")
+    private Date date;
 
     public Long getId() {
         return id;
@@ -53,5 +59,21 @@ public class Operation implements Serializable {
 
     public void setuFrom(UserChat uFrom) {
         this.uFrom = uFrom;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 }
