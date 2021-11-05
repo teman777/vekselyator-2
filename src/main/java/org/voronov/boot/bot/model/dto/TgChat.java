@@ -10,7 +10,7 @@ public class TgChat {
     @Id
     private Long id;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "ChatID")
     private List<UserChat> users;
 

@@ -11,11 +11,11 @@ public class UserChat implements Serializable {
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "ChatID")
+    @JoinColumn(name = "ChatID", referencedColumnName = "ID")
     private TgChat chat;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "UserID")
+    @JoinColumn(name = "UserID", referencedColumnName = "ID")
     private TgUser user;
 
 //    @OneToMany
