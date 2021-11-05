@@ -8,6 +8,7 @@ import java.util.List;
 @Table(name = "Chats")
 public class TgChat {
     @Id
+    @Column(name = "ID")
     private Long id;
 
     @OneToMany(fetch = FetchType.EAGER)

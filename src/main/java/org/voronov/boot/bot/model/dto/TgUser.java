@@ -8,6 +8,7 @@ import java.util.List;
 @Table(name = "Users")
 public class TgUser {
     @Id
+    @Column(name = "ID")
     private Long id;
 
     @Column(name = "Brief")

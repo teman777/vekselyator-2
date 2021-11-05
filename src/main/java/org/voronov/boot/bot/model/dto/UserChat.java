@@ -1,5 +1,7 @@
 package org.voronov.boot.bot.model.dto;
 
+import org.checkerframework.checker.units.qual.C;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -8,6 +10,7 @@ import java.io.Serializable;
 public class UserChat implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID")
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
