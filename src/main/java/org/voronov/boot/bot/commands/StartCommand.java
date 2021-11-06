@@ -10,11 +10,15 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.voronov.boot.bot.exceptions.NoChatException;
 import org.voronov.boot.bot.services.ChatService;
+import org.voronov.boot.bot.services.MessageTextService;
 
 @Component
 public class StartCommand extends BotCommand {
     @Autowired
     private ChatService chatService;
+
+    @Autowired
+    private MessageTextService messageTextService;
 
     public StartCommand() {
         super("start", "Регистрация нового пользователя");
@@ -34,7 +38,7 @@ public class StartCommand extends BotCommand {
 
         try {
             chatService.registerUserForChat(chat.getId(), user.getId(), brief);
-            sm = new SendMessage(String.valueOf(chat.getId()), "Зарегал");
+            sm = new SendMessage(String.valueOf(chat.getId()), messageTextService.getRegisterText(brief));
         } catch (NoChatException e) {
             //todo logging
             e.printStackTrace();

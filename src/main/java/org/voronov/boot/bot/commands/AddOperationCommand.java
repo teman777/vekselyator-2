@@ -15,6 +15,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.voronov.boot.bot.caches.operations.AddOperationCache;
 import org.voronov.boot.bot.caches.operations.AddOperationEntity;
 import org.voronov.boot.bot.services.ChatService;
+import org.voronov.boot.bot.services.MessageTextService;
 import org.voronov.boot.bot.services.buttons.AddButtonBuilderService;
 
 import java.util.Arrays;
@@ -35,7 +36,8 @@ public class AddOperationCommand extends BotCommand {
     @Autowired
     private ChatService chatService;
 
-
+    @Autowired
+    private MessageTextService messageTextService;
 
     public static final List<String> INLINE_COMMANDS = Arrays.asList("cancel", "next" ,"adduser", "deluser", "settype");
 
@@ -79,7 +81,7 @@ public class AddOperationCommand extends BotCommand {
 
             EditMessageText edit = EditMessageText.builder()
                     .chatId(message.getChat().getId().toString())
-                    .text("Вексель добавлен")
+                    .text(messageTextService.getAddOperationText())
                     .messageId(message.getReplyToMessage().getMessageId())
                     .build();
             
