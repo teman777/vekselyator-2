@@ -11,6 +11,8 @@ public class MessageTextService {
     private static final String ADD_OPERATION_TEMPLATE = "Вексель добавлен.";
     private static final String OPERATION_TEMPLATE = "%s -> %s (%.2f)\n%s";
     private static final String WRONG_USER_ADD = "Не твое дело, проходи мимо.";
+    private static final String LIST_WELCOME = "Выбери, что показать.";
+
     private static final String HELP_TEXT = "Это бот векселятор - сохраняет долги в этом чате.\n" +
             "/start - Зарегистрироваться в этом чате. Можно обновить свой ник\n" +
             "/add - Добавить вексель. Жми это, если тебе задолжали.\n" +
@@ -41,5 +43,9 @@ public class MessageTextService {
                 operation.getuTo().getUser().getBrief(),
                 operation.getQty(),
                 operation.getComment());
+    }
+
+    public String getListWelcome() {
+        return LIST_WELCOME;
     }
 }

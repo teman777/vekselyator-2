@@ -2,7 +2,10 @@ package org.voronov.boot.bot.model.dto;
 
 
 import javax.persistence.*;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "Chats")
@@ -36,6 +39,17 @@ public class TgChat {
             return users.stream().anyMatch(user -> user.getUser().getId().equals(userId));
         } else {
             return false;
+        }
+    }
+
+    public Set<Operation> getAllChatsOperations() {
+        if (users != null) {
+            return users
+                    .stream()
+                    .flatMap(a -> a.getAllOperations().stream())
+                    .collect(Collectors.toSet());
+        } else {
+            return Collections.emptySet();
         }
     }
 

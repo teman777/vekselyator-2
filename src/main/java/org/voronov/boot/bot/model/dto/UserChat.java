@@ -5,7 +5,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -65,8 +65,8 @@ public class UserChat implements Serializable {
         this.givedOperations = givedOperations;
     }
 
-    public List<Operation> getAllOperations() {
-        List<Operation> operations = new ArrayList<>();
+    public Set<Operation> getAllOperations() {
+        Set<Operation> operations = new HashSet<>();
         if (CollectionUtils.isNotEmpty(takedOperations)) {
             operations.addAll(takedOperations);
         }

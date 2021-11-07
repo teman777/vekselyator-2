@@ -68,6 +68,8 @@ public class Bot extends TelegramLongPollingCommandBot {
             startCommand.handleInline(query, this);
         } else if (AddOperationCommand.INLINE_COMMANDS.contains(command)){
             addOperationCommand.handleInline(query, this);
+        } else if (ListCommand.INLINE_COMMANDS.contains(command)) {
+            listCommand.handleInline(query, this);
         }
 
     }
