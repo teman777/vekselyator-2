@@ -9,9 +9,10 @@ import java.util.*;
 @Service
 public class SaldoService {
 
-    public List<Operation> optimize(List<Operation> operationList) {
+    public Set<Operation> optimize(Collection<Operation> operationList) {
+        //not working
         Map<UserChat, Double> userAndBalance = buildUserMap(operationList);
-        List<Operation> newOperations = new ArrayList<>();
+        Set<Operation> newOperations = new HashSet<>();
 
         boolean saldoIsReady = false;
 
@@ -73,7 +74,7 @@ public class SaldoService {
         return findedUser;
     }
 
-    private static Map<UserChat, Double> buildUserMap(List<Operation> operations) {
+    private static Map<UserChat, Double> buildUserMap(Collection<Operation> operations) {
         Map<UserChat, Double> userAndBalance = new HashMap<>();
         operations.forEach(operation -> {
             UserChat from = operation.getuFrom();
