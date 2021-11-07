@@ -1,10 +1,13 @@
 package org.voronov.boot.bot.model.dto;
 
-import org.checkerframework.checker.units.qual.C;
+import org.apache.commons.collections4.CollectionUtils;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "UserChatRelation")
@@ -24,8 +27,11 @@ public class UserChat implements Serializable {
 
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "UTo", referencedColumnName = "ID")
-    //@JoinColumn(name = "UFrom", referencedColumnName = "ID")
-    private List<Operation> operations;
+    private Set<Operation> takedOperations;
+
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "UFrom", referencedColumnName = "ID")
+    private Set<Operation> givedOperations;
 
     public TgChat getChat() {
         return chat;
@@ -43,12 +49,32 @@ public class UserChat implements Serializable {
         this.user = user;
     }
 
-    public List<Operation> getOperations() {
-        return operations;
+    public Set<Operation> getTakedOperations() {
+        return takedOperations;
     }
 
-    public void setOperations(List<Operation> operations) {
-        this.operations = operations;
+    public void setTakedOperations(Set<Operation> takedOperations) {
+        this.takedOperations = takedOperations;
+    }
+
+    public Set<Operation> getGivedOperations() {
+        return givedOperations;
+    }
+
+    public void setGivedOperations(Set<Operation> givedOperations) {
+        this.givedOperations = givedOperations;
+    }
+
+    public List<Operation> getAllOperations() {
+        List<Operation> operations = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(takedOperations)) {
+            operations.addAll(takedOperations);
+        }
+
+        if (CollectionUtils.isNotEmpty(givedOperations)) {
+            operations.addAll(givedOperations);
+        }
+        return operations;
     }
 
     public Long getId() {

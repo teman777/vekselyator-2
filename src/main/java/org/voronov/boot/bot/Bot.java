@@ -64,7 +64,9 @@ public class Bot extends TelegramLongPollingCommandBot {
     private void handleCallback(Update update) {
         CallbackQuery query = update.getCallbackQuery();
         String command = query.getData().split("/")[0];
-        if (AddOperationCommand.INLINE_COMMANDS.contains(command)){
+        if (StartCommand.INLINE_COMMANDS.contains(command)) {
+            startCommand.handleInline(query, this);
+        } else if (AddOperationCommand.INLINE_COMMANDS.contains(command)){
             addOperationCommand.handleInline(query, this);
         }
 

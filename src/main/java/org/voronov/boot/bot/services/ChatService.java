@@ -1,6 +1,8 @@
 package org.voronov.boot.bot.services;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.voronov.boot.bot.caches.operations.AddOperationEntity;
@@ -15,7 +17,6 @@ import org.voronov.boot.bot.model.repositories.UserChatRepository;
 import org.voronov.boot.bot.model.repositories.UserRepository;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +28,8 @@ public class ChatService {
     private ChatRepository chatRepository;
     private UserChatRepository userChatRepository;
     private OperationRepository operationRepository;
+
+    private Logger logger = LoggerFactory.getLogger(ChatService.class);
 
     @Autowired
     public ChatService(UserRepository userRepository, ChatRepository chatRepository, UserChatRepository userChatRepository, OperationRepository operationRepository) {

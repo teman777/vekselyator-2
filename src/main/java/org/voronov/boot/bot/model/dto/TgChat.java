@@ -2,7 +2,7 @@ package org.voronov.boot.bot.model.dto;
 
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "Chats")
@@ -13,7 +13,7 @@ public class TgChat {
 
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "ChatID")
-    private List<UserChat> users;
+    private Set<UserChat> users;
 
     public Long getId() {
         return id;
@@ -23,11 +23,11 @@ public class TgChat {
         this.id = id;
     }
 
-    public List<UserChat> getUsers() {
+    public Set<UserChat> getUsers() {
         return users;
     }
 
-    public void setUsers(List<UserChat> users) {
+    public void setUsers(Set<UserChat> users) {
         this.users = users;
     }
 

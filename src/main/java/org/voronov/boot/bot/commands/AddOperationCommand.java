@@ -8,7 +8,10 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
-import org.telegram.telegrambots.meta.api.objects.*;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
+import org.telegram.telegrambots.meta.api.objects.Chat;
+import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -21,8 +24,6 @@ import org.voronov.boot.bot.services.buttons.AddButtonBuilderService;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Component
 public class AddOperationCommand extends BotCommand {
@@ -39,7 +40,7 @@ public class AddOperationCommand extends BotCommand {
     @Autowired
     private MessageTextService messageTextService;
 
-    public static final List<String> INLINE_COMMANDS = Arrays.asList("cancel", "next" ,"adduser", "deluser", "settype");
+    public static final List<String> INLINE_COMMANDS = Arrays.asList("cancel", "next", "adduser", "deluser", "settype");
 
     public AddOperationCommand() {
         super("add", "Добавить вексель");
@@ -74,49 +75,56 @@ public class AddOperationCommand extends BotCommand {
 
             String id = message.getReplyToMessage().getReplyMarkup().getKeyboard().get(0).get(0).getCallbackData().split("/")[1];
             AddOperationEntity entity = cache.getFromCache(UUID.fromString(id));
-            entity.setQty(qty);
-            entity.setComment(comment);
 
-            chatService.createOperationFromEntity(entity);
+            if (message.getFrom().getId() == entity.getFrom()) {
 
-            EditMessageText edit = EditMessageText.builder()
-                    .chatId(message.getChat().getId().toString())
-                    .text(messageTextService.getAddOperationText())
-                    .messageId(message.getReplyToMessage().getMessageId())
-                    .build();
-            
-            send(edit, bot);
+                entity.setQty(qty);
+                entity.setComment(comment);
+
+                chatService.createOperationFromEntity(entity);
+
+                EditMessageText edit = EditMessageText.builder()
+                        .chatId(message.getChat().getId().toString())
+                        .text(messageTextService.getAddOperationText())
+                        .messageId(message.getReplyToMessage().getMessageId())
+                        .build();
+
+                send(edit, bot);
+            } else {
+                SendMessage sendMessage = SendMessage.builder()
+                        .chatId(message.getChat().getId().toString())
+                        .replyToMessageId(message.getMessageId())
+                        .text(messageTextService.getWrongUserAddText())
+                        .build();
+                send(sendMessage, bot);
+            }
         }
-
-
     }
 
     public void handleInline(CallbackQuery query, AbsSender bot) {
-        //CallbackQuery query = update.getCallbackQuery();
         String[] data = query.getData().split("/");
         switch (data[0]) {
             case "adduser":
-                inlineAddUser(data[1], data[2], query.getMessage().getChat().getId(), query.getMessage().getMessageId() ,bot);
+                inlineAddUser(data[1], data[2], query.getMessage().getChat().getId(), query.getMessage().getMessageId(), bot);
                 break;
             case "deluser":
-                inlineDelUser(data[1], data[2], query.getMessage().getChat().getId(), query.getMessage().getMessageId() ,bot);
+                inlineDelUser(data[1], data[2], query.getMessage().getChat().getId(), query.getMessage().getMessageId(), bot);
                 break;
             case "cancel":
-                inlineCancel(data[1], query.getMessage().getChat().getId(), query.getMessage().getMessageId() ,bot);
+                inlineCancel(data[1], query.getMessage().getChat().getId(), query.getMessage().getMessageId(), bot);
                 break;
             case "next":
-                inlineNext(data[1], query.getMessage().getChat().getId(), query.getMessage().getMessageId() ,bot);
+                inlineNext(data[1], query.getMessage().getChat().getId(), query.getMessage().getMessageId(), bot);
                 break;
             case "settype":
-                inlineSetType(data[1], data[2], query.getMessage().getChat().getId(), query.getMessage().getMessageId() ,bot);
+                inlineSetType(data[1], data[2], query.getMessage().getChat().getId(), query.getMessage().getMessageId(), bot);
                 break;
             default:
                 break;
         }
-
     }
 
-    private void inlineAddUser(String userId, String id, Long chatId, Integer messageId ,AbsSender bot) {
+    private void inlineAddUser(String userId, String id, Long chatId, Integer messageId, AbsSender bot) {
         AddOperationEntity entity = cache.getFromCache(UUID.fromString(id));
         entity.addTo(Long.valueOf(userId));
         cache.putToCache(entity);
@@ -128,7 +136,7 @@ public class AddOperationCommand extends BotCommand {
         send(edit, bot);
     }
 
-    private void inlineDelUser(String userId, String id, Long chatId, Integer messageId ,AbsSender bot) {
+    private void inlineDelUser(String userId, String id, Long chatId, Integer messageId, AbsSender bot) {
         AddOperationEntity entity = cache.getFromCache(UUID.fromString(id));
         entity.deleteFromTo(Long.valueOf(userId));
         cache.putToCache(entity);
@@ -140,11 +148,11 @@ public class AddOperationCommand extends BotCommand {
         send(edit, bot);
     }
 
-    private void inlineSetType(String type, String id, Long chatId, Integer messageId ,AbsSender bot) {
+    private void inlineSetType(String type, String id, Long chatId, Integer messageId, AbsSender bot) {
         AddOperationEntity entity = cache.getFromCache(UUID.fromString(id));
         if (type.equals("0")) {
             entity.setType(AddOperationEntity.Type.DIVIDE_TO_ALL);
-        } else if (type.equals("1")){
+        } else if (type.equals("1")) {
             entity.setType(AddOperationEntity.Type.NOT_DIVIDE);
         }
         cache.putToCache(entity);
@@ -159,13 +167,13 @@ public class AddOperationCommand extends BotCommand {
 
     }
 
-    private void inlineCancel(String id, Long chatId, Integer messageId ,AbsSender bot) {
+    private void inlineCancel(String id, Long chatId, Integer messageId, AbsSender bot) {
         cache.removeFromCache(UUID.fromString(id));
         DeleteMessage deleteMessage = DeleteMessage.builder().messageId(messageId).chatId(String.valueOf(chatId)).build();
         send(deleteMessage, bot);
     }
 
-    private void inlineNext(String id, Long chatId, Integer messageId ,AbsSender bot) {
+    private void inlineNext(String id, Long chatId, Integer messageId, AbsSender bot) {
         AddOperationEntity entity = cache.getFromCache(UUID.fromString(id));
         Stage stage = entity.getTo().size() > 1 ? Stage.SETTING_TYPE : Stage.SETTING_QTY;
         String msg;

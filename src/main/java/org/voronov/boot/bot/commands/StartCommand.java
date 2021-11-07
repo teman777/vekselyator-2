@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
@@ -12,6 +13,9 @@ import org.voronov.boot.bot.exceptions.NoChatException;
 import org.voronov.boot.bot.services.ChatService;
 import org.voronov.boot.bot.services.MessageTextService;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Component
 public class StartCommand extends BotCommand {
     @Autowired
@@ -19,6 +23,8 @@ public class StartCommand extends BotCommand {
 
     @Autowired
     private MessageTextService messageTextService;
+
+    public static final List<String> INLINE_COMMANDS = Arrays.asList("ready", "register");
 
     public StartCommand() {
         super("start", "Регистрация нового пользователя");
@@ -50,6 +56,10 @@ public class StartCommand extends BotCommand {
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
+    }
+
+    public void handleInline(CallbackQuery query, AbsSender bot) {
+
     }
 
 }
