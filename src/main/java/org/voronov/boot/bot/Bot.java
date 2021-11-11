@@ -1,6 +1,5 @@
 package org.voronov.boot.bot;
 
-import org.aspectj.weaver.ast.Call;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -8,13 +7,10 @@ import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingC
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.voronov.boot.bot.commands.AddOperationCommand;
-import org.voronov.boot.bot.commands.HelpCommand;
-import org.voronov.boot.bot.commands.ListCommand;
-import org.voronov.boot.bot.commands.StartCommand;
 import org.voronov.boot.bot.commands.core.AbstractCommand;
 import org.voronov.boot.bot.services.CommandService;
 
+import java.util.Collection;
 import java.util.List;
 
 @Component
@@ -34,7 +30,7 @@ public class Bot extends TelegramLongPollingCommandBot {
         registerAllCommands(commandService.getCommands());
     }
 
-    private void registerAllCommands(List<AbstractCommand> commands) {
+    private void registerAllCommands(Collection<AbstractCommand> commands) {
         for (AbstractCommand command : commands) {
             register(command);
         }
@@ -59,7 +55,6 @@ public class Bot extends TelegramLongPollingCommandBot {
     private void handleCallback(Update update) {
         CallbackQuery query = update.getCallbackQuery();
         commandService.handleInline(query, this);
-
     }
 
     private void handleReply(Message message) {
