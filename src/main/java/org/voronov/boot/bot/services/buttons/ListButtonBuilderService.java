@@ -23,7 +23,7 @@ public class ListButtonBuilderService {
     public InlineKeyboardMarkup buildButtons(ListOperationsEntity entity, ListCommand.Stage stage) {
         if (stage == ListCommand.Stage.SETTING_TYPE) {
             return buildForSettingType(entity);
-        } else if (stage == ListCommand.Stage.LIST) {
+        } else if (stage == ListCommand.Stage.LIST_MY) {
             return buildList(entity);
         }
         return null;

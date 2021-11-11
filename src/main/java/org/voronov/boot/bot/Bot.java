@@ -12,6 +12,8 @@ import org.voronov.boot.bot.commands.AddOperationCommand;
 import org.voronov.boot.bot.commands.HelpCommand;
 import org.voronov.boot.bot.commands.ListCommand;
 import org.voronov.boot.bot.commands.StartCommand;
+import org.voronov.boot.bot.commands.core.AbstractCommand;
+import org.voronov.boot.bot.services.CommandService;
 
 import java.util.List;
 
@@ -24,25 +26,18 @@ public class Bot extends TelegramLongPollingCommandBot {
     @Value("${telegram.bot.token}")
     private String token;
 
-    private StartCommand startCommand;
-    private HelpCommand helpCommand;
-    private AddOperationCommand addOperationCommand;
-    private ListCommand listCommand;
+    private CommandService commandService;
 
     @Autowired
-    public Bot(StartCommand startCommand, HelpCommand helpCommand, AddOperationCommand addOperationCommand, ListCommand listCommand) {
-        this.startCommand = startCommand;
-        this.helpCommand = helpCommand;
-        this.addOperationCommand = addOperationCommand;
-        this.listCommand = listCommand;
-        registerAllCommands();
+    public Bot(CommandService commandService) {
+        this.commandService = commandService;
+        registerAllCommands(commandService.getCommands());
     }
 
-    private void registerAllCommands() {
-        register(startCommand);
-        register(helpCommand);
-        register(addOperationCommand);
-        register(listCommand);
+    private void registerAllCommands(List<AbstractCommand> commands) {
+        for (AbstractCommand command : commands) {
+            register(command);
+        }
     }
 
     @Override
@@ -63,20 +58,12 @@ public class Bot extends TelegramLongPollingCommandBot {
 
     private void handleCallback(Update update) {
         CallbackQuery query = update.getCallbackQuery();
-        String command = query.getData().split("/")[0];
-        if (StartCommand.INLINE_COMMANDS.contains(command)) {
-            startCommand.handleInline(query, this);
-        } else if (AddOperationCommand.INLINE_COMMANDS.contains(command)){
-            addOperationCommand.handleInline(query, this);
-        } else if (ListCommand.INLINE_COMMANDS.contains(command)) {
-            listCommand.handleInline(query, this);
-        }
+        commandService.handleInline(query, this);
 
     }
 
     private void handleReply(Message message) {
-        addOperationCommand.handleReply(message, this);
-
+        commandService.handleReply(message, this);
     }
 
     @Override

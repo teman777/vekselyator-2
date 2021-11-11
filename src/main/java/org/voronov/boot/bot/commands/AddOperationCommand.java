@@ -2,8 +2,6 @@ package org.voronov.boot.bot.commands;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.extensions.bots.commandbot.commands.BotCommand;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
@@ -18,17 +16,17 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.voronov.boot.bot.caches.operations.AddOperationCache;
 import org.voronov.boot.bot.caches.operations.AddOperationEntity;
 import org.voronov.boot.bot.commands.core.AbstractCommand;
-import org.voronov.boot.bot.model.dto.TgChat;
+import org.voronov.boot.bot.commands.core.InlineHandler;
+import org.voronov.boot.bot.commands.core.ReplyHandler;
 import org.voronov.boot.bot.services.ChatService;
 import org.voronov.boot.bot.services.MessageTextService;
 import org.voronov.boot.bot.services.buttons.AddButtonBuilderService;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Component
+@InlineHandler(inlineCommands = {"cancel", "next", "adduser", "deluser", "settype"})
+@ReplyHandler
 public class AddOperationCommand extends AbstractCommand {
 
     @Autowired
@@ -42,8 +40,6 @@ public class AddOperationCommand extends AbstractCommand {
 
     @Autowired
     private MessageTextService messageTextService;
-
-    public static final List<String> INLINE_COMMANDS = Arrays.asList("cancel", "next", "adduser", "deluser", "settype");
 
     public AddOperationCommand() {
         super("add", "Добавить вексель");
@@ -110,6 +106,7 @@ public class AddOperationCommand extends AbstractCommand {
         }
     }
 
+    @Override
     public void handleInline(CallbackQuery query, AbsSender bot) {
         String[] data = query.getData().split("/");
         String entityId;

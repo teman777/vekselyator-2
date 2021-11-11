@@ -10,7 +10,6 @@ import java.util.*;
 public class SaldoService {
 
     public Set<Operation> optimize(Collection<Operation> operationList) {
-        //not working
         Map<UserChat, Double> userAndBalance = buildUserMap(operationList);
         Set<Operation> newOperations = new HashSet<>();
 
@@ -48,7 +47,7 @@ public class SaldoService {
                     userAndBalance.remove(minUser);
                 }
             }
-
+            //todo need to do something with id
             newOperations.add(saldo);
 
             if (userAndBalance.keySet().isEmpty()) {

@@ -40,9 +40,4 @@ public class StartCommand extends AbstractCommand {
         send(sm, absSender);
     }
 
-    public void handleInline(CallbackQuery query, AbsSender bot) {
-
-
-    }
-
 }

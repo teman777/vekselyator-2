@@ -3,7 +3,9 @@ package org.voronov.boot.bot.commands.core;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Chat;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -26,7 +28,11 @@ public abstract class AbstractCommand extends BotCommand {
     public void execute(AbsSender absSender, User user, Chat chat, String[] arguments) {
         String brief = messageTextService.buildBriefForUser(user);
         chatService.registerUserForChat(chat.getId(), user.getId(), brief);
-        __execute(absSender, user, chat, arguments);
+        try {
+            __execute(absSender, user, chat, arguments);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     protected void send(BotApiMethod method, AbsSender bot) {
@@ -38,4 +44,12 @@ public abstract class AbstractCommand extends BotCommand {
     }
 
     protected abstract void __execute(AbsSender absSender, User user, Chat chat, String[] arguments);
+
+    public void handleInline(CallbackQuery query, AbsSender bot) {
+
+    }
+
+    public void handleReply(Message message, AbsSender bot) {
+
+    }
 }
