@@ -1,6 +1,5 @@
 package org.voronov.boot.bot.services;
 
-import org.springframework.format.datetime.DateFormatter;
 import org.springframework.stereotype.Service;
 import org.voronov.boot.bot.model.dto.Operation;
 
@@ -20,6 +19,8 @@ public class MessageTextService {
             "/my - Список векселей, где ты участвуешь.\n" +
             "/all - Список вообще всех векселей в этом чате.\n" +
             "/saldo - Расчитать общее сальдо для всех участников чата.\n";
+
+    private static final String ERROR = "Произошла какая-то ебала, я ничего не сделал :(";
 
     public String getRegisterText(String username) {
         return String.format(REGISTER_TEMPLATE, username);
@@ -47,5 +48,9 @@ public class MessageTextService {
 
     public String getListWelcome() {
         return LIST_WELCOME;
+    }
+
+    public String getError() {
+        return ERROR;
     }
 }

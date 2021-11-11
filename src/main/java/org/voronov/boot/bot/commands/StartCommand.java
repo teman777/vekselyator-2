@@ -48,7 +48,7 @@ public class StartCommand extends BotCommand {
         } catch (NoChatException e) {
             //todo logging
             e.printStackTrace();
-            sm = new SendMessage(String.valueOf(chat.getId()), "Произошла какая-то ебала, я вас не зарегал :(");
+            sm = new SendMessage(String.valueOf(chat.getId()), messageTextService.getError());
         }
 
         try {

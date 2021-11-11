@@ -103,21 +103,36 @@ public class AddOperationCommand extends BotCommand {
 
     public void handleInline(CallbackQuery query, AbsSender bot) {
         String[] data = query.getData().split("/");
+        String entityId ;
+        String anotherData;
+        if (data.length > 2) {
+            entityId = data[2];
+            anotherData = data[1];
+        } else {
+            entityId = data[1];
+            anotherData = "";
+        }
+
+        AddOperationEntity entity = cache.getFromCache(UUID.fromString(entityId));
+        if (!query.getFrom().getId().equals(entity.getFrom())) {
+            return;
+        }
+
         switch (data[0]) {
             case "adduser":
-                inlineAddUser(data[1], data[2], query.getMessage().getChat().getId(), query.getMessage().getMessageId(), bot);
+                inlineAddUser(anotherData, entityId, query.getMessage().getChat().getId(), query.getMessage().getMessageId(), bot);
                 break;
             case "deluser":
-                inlineDelUser(data[1], data[2], query.getMessage().getChat().getId(), query.getMessage().getMessageId(), bot);
+                inlineDelUser(anotherData, entityId, query.getMessage().getChat().getId(), query.getMessage().getMessageId(), bot);
                 break;
             case "cancel":
-                inlineCancel(data[1], query.getMessage().getChat().getId(), query.getMessage().getMessageId(), bot);
+                inlineCancel(entityId, query.getMessage().getChat().getId(), query.getMessage().getMessageId(), bot);
                 break;
             case "next":
-                inlineNext(data[1], query.getMessage().getChat().getId(), query.getMessage().getMessageId(), bot);
+                inlineNext(entityId, query.getMessage().getChat().getId(), query.getMessage().getMessageId(), bot);
                 break;
             case "settype":
-                inlineSetType(data[1], data[2], query.getMessage().getChat().getId(), query.getMessage().getMessageId(), bot);
+                inlineSetType(anotherData, entityId, query.getMessage().getChat().getId(), query.getMessage().getMessageId(), bot);
                 break;
             default:
                 break;
