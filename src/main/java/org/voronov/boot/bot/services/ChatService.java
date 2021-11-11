@@ -117,4 +117,8 @@ public class ChatService {
             }
         }
     }
+
+    public List<Operation> getOperations(Long chatId, Long userId) {
+        return operationRepository.findByChatIdAndUserId(chatId, userId);
+    }
 }

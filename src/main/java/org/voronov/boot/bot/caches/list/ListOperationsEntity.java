@@ -17,7 +17,7 @@ public class ListOperationsEntity extends CachedEntity {
 
     public ListOperationsEntity(Set<Operation> operations) {
         super();
-        allSortedOperations = new ArrayList<>();
+
         selectedOperations = new ArrayList<>();
         operationMap = new HashMap<>();
 
@@ -49,14 +49,6 @@ public class ListOperationsEntity extends CachedEntity {
 
     public void setSelectedOperations(List<Long> selectedOperations) {
         this.selectedOperations = selectedOperations;
-    }
-
-    public Long getCurrentLastOnScreen() {
-        return currentLastOnScreen;
-    }
-
-    public void setCurrentLastOnScreen(Long currentLastOnScreen) {
-        this.currentLastOnScreen = currentLastOnScreen;
     }
 
     public Map<Long, Operation> getOperationMap() {
