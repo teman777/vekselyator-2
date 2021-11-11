@@ -48,7 +48,7 @@ public class ChatService {
     }
 
     @Transactional
-    public void registerUserForChat(Long chatID, Long userID, String userBrief) throws NoChatException {
+    public void registerUserForChat(Long chatID, Long userID, String userBrief) {
         Optional<TgChat> chat = findChat(chatID);
         Optional<TgUser> user = findUser(userID);
         TgChat tgChat;

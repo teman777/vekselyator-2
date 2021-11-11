@@ -13,6 +13,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.voronov.boot.bot.caches.list.ListOperationsCache;
 import org.voronov.boot.bot.caches.list.ListOperationsEntity;
+import org.voronov.boot.bot.commands.core.AbstractCommand;
 import org.voronov.boot.bot.model.dto.Operation;
 import org.voronov.boot.bot.model.dto.TgChat;
 import org.voronov.boot.bot.services.ChatService;
@@ -26,7 +27,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
-public class ListCommand extends BotCommand {
+public class ListCommand extends AbstractCommand {
 
     public static final List<String> INLINE_COMMANDS = Arrays.asList("cancelList", "nextList", "prevList", "my", "all", "select", "deleteOperations");
 
@@ -47,7 +48,7 @@ public class ListCommand extends BotCommand {
     }
 
     @Override
-    public void execute(AbsSender absSender, User user, Chat chat, String[] arguments) {
+    protected void __execute(AbsSender absSender, User user, Chat chat, String[] arguments) {
         Optional<TgChat> findedChat = chatService.findChat(chat.getId());
         if (findedChat.isPresent()) {
             TgChat tgChat = findedChat.get();
@@ -70,21 +71,12 @@ public class ListCommand extends BotCommand {
 
             send(sm, absSender);
         }
-
-
     }
 
     public void handleInline(CallbackQuery query, AbsSender bot) {
 
     }
 
-    private void send(BotApiMethod method, AbsSender bot) {
-        try {
-            bot.execute(method);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
-    }
 
     public enum Type {
         MY, ALL;

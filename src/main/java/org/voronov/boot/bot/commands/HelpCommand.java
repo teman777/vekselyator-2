@@ -8,10 +8,11 @@ import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.voronov.boot.bot.commands.core.AbstractCommand;
 import org.voronov.boot.bot.services.MessageTextService;
 
 @Component
-public class HelpCommand extends BotCommand {
+public class HelpCommand extends AbstractCommand {
 
     @Autowired
     private MessageTextService textService;
@@ -20,8 +21,9 @@ public class HelpCommand extends BotCommand {
         super("help", "Краткий список команд");
     }
 
+
     @Override
-    public void execute(AbsSender absSender, User user, Chat chat, String[] arguments) {
+    protected void __execute(AbsSender absSender, User user, Chat chat, String[] arguments) {
         SendMessage sm = new SendMessage(String.valueOf(chat.getId()), textService.getHelpText());
 
         try {

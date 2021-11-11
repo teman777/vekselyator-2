@@ -17,16 +17,19 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.voronov.boot.bot.caches.operations.AddOperationCache;
 import org.voronov.boot.bot.caches.operations.AddOperationEntity;
+import org.voronov.boot.bot.commands.core.AbstractCommand;
+import org.voronov.boot.bot.model.dto.TgChat;
 import org.voronov.boot.bot.services.ChatService;
 import org.voronov.boot.bot.services.MessageTextService;
 import org.voronov.boot.bot.services.buttons.AddButtonBuilderService;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Component
-public class AddOperationCommand extends BotCommand {
+public class AddOperationCommand extends AbstractCommand {
 
     @Autowired
     private AddOperationCache cache;
@@ -48,6 +51,7 @@ public class AddOperationCommand extends BotCommand {
 
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] arguments) {
+        super.execute(absSender, user, chat, arguments);
         AddOperationEntity entity = new AddOperationEntity();
         entity.setFrom(user.getId());
         entity.setChat(chat.getId());
@@ -63,6 +67,11 @@ public class AddOperationCommand extends BotCommand {
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    protected void __execute(AbsSender absSender, User user, Chat chat, String[] arguments) {
+
     }
 
     public void handleReply(Message message, AbsSender bot) {
@@ -103,7 +112,7 @@ public class AddOperationCommand extends BotCommand {
 
     public void handleInline(CallbackQuery query, AbsSender bot) {
         String[] data = query.getData().split("/");
-        String entityId ;
+        String entityId;
         String anotherData;
         if (data.length > 2) {
             entityId = data[2];
@@ -207,13 +216,6 @@ public class AddOperationCommand extends BotCommand {
         send(text, bot);
     }
 
-    private void send(BotApiMethod method, AbsSender bot) {
-        try {
-            bot.execute(method);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
-    }
 
     public enum Stage {
         ADDING_TO,

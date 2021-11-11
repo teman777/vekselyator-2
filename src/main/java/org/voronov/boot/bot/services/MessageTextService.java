@@ -1,6 +1,7 @@
 package org.voronov.boot.bot.services;
 
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.objects.User;
 import org.voronov.boot.bot.model.dto.Operation;
 
 @Service
@@ -52,5 +53,16 @@ public class MessageTextService {
 
     public String getError() {
         return ERROR;
+    }
+
+    public String buildBriefForUser(User user) {
+        String brief = user.getUserName();
+        if (brief == null || "".equals(brief)) {
+            brief = user.getFirstName();
+            if (user.getLastName() != null && !user.getLastName().equals("")) {
+                brief += " " + user.getLastName();
+            }
+        }
+        return brief;
     }
 }
