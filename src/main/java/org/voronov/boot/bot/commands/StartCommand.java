@@ -32,14 +32,11 @@ public class StartCommand extends AbstractCommand {
     protected void __execute(AbsSender absSender, User user, Chat chat, String[] arguments) {
         SendMessage sm;
         String brief = messageTextService.buildBriefForUser(user);
-        try {
-            chatService.registerUserForChat(chat.getId(), user.getId(), brief);
-            sm = new SendMessage(String.valueOf(chat.getId()), messageTextService.getRegisterText(brief));
-        } catch (Exception e) {
-            //todo logging
-            e.printStackTrace();
-            sm = new SendMessage(String.valueOf(chat.getId()), messageTextService.getError());
-        }
+
+        chatService.registerUserForChat(chat.getId(), user.getId(), brief);
+        sm = new SendMessage(String.valueOf(chat.getId()), messageTextService.getRegisterText(brief));
+
+
         send(sm, absSender);
     }
 
