@@ -15,9 +15,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.voronov.boot.bot.caches.operations.AddOperationCache;
 import org.voronov.boot.bot.caches.operations.AddOperationEntity;
-import org.voronov.boot.bot.commands.core.AbstractCommand;
-import org.voronov.boot.bot.commands.core.InlineHandler;
-import org.voronov.boot.bot.commands.core.ReplyHandler;
+import org.voronov.boot.core.AbstractCommand;
 import org.voronov.boot.bot.services.ChatService;
 import org.voronov.boot.bot.services.MessageTextService;
 import org.voronov.boot.bot.services.buttons.AddButtonBuilderService;
@@ -25,8 +23,6 @@ import org.voronov.boot.bot.services.buttons.AddButtonBuilderService;
 import java.util.UUID;
 
 @Component
-@InlineHandler(inlineCommands = {"cancel", "next", "adduser", "deluser", "settype"})
-@ReplyHandler
 public class AddOperationCommand extends AbstractCommand {
 
     @Autowired
@@ -104,113 +100,6 @@ public class AddOperationCommand extends AbstractCommand {
                 send(sendMessage, bot);
             }
         }
-    }
-
-    @Override
-    public void handleInline(CallbackQuery query, AbsSender bot) {
-        String[] data = query.getData().split("/");
-        String entityId;
-        String anotherData;
-        if (data.length > 2) {
-            entityId = data[2];
-            anotherData = data[1];
-        } else {
-            entityId = data[1];
-            anotherData = "";
-        }
-
-        AddOperationEntity entity = cache.getFromCache(UUID.fromString(entityId));
-        if (!query.getFrom().getId().equals(entity.getFrom())) {
-            return;
-        }
-
-        switch (data[0]) {
-            case "adduser":
-                inlineAddUser(anotherData, entityId, query.getMessage().getChat().getId(), query.getMessage().getMessageId(), bot);
-                break;
-            case "deluser":
-                inlineDelUser(anotherData, entityId, query.getMessage().getChat().getId(), query.getMessage().getMessageId(), bot);
-                break;
-            case "cancel":
-                inlineCancel(entityId, query.getMessage().getChat().getId(), query.getMessage().getMessageId(), bot);
-                break;
-            case "next":
-                inlineNext(entityId, query.getMessage().getChat().getId(), query.getMessage().getMessageId(), bot);
-                break;
-            case "settype":
-                inlineSetType(anotherData, entityId, query.getMessage().getChat().getId(), query.getMessage().getMessageId(), bot);
-                break;
-            default:
-                break;
-        }
-    }
-
-    private void inlineAddUser(String userId, String id, Long chatId, Integer messageId, AbsSender bot) {
-        AddOperationEntity entity = cache.getFromCache(UUID.fromString(id));
-        entity.addTo(Long.valueOf(userId));
-        cache.putToCache(entity);
-        InlineKeyboardMarkup markup = buttonBuilder.buildButtons(entity, Stage.ADDING_TO);
-        EditMessageReplyMarkup edit = EditMessageReplyMarkup.builder()
-                .chatId(String.valueOf(chatId))
-                .messageId(messageId)
-                .replyMarkup(markup).build();
-        send(edit, bot);
-    }
-
-    private void inlineDelUser(String userId, String id, Long chatId, Integer messageId, AbsSender bot) {
-        AddOperationEntity entity = cache.getFromCache(UUID.fromString(id));
-        entity.deleteFromTo(Long.valueOf(userId));
-        cache.putToCache(entity);
-        InlineKeyboardMarkup markup = buttonBuilder.buildButtons(entity, Stage.ADDING_TO);
-        EditMessageReplyMarkup edit = EditMessageReplyMarkup.builder()
-                .chatId(String.valueOf(chatId))
-                .messageId(messageId)
-                .replyMarkup(markup).build();
-        send(edit, bot);
-    }
-
-    private void inlineSetType(String type, String id, Long chatId, Integer messageId, AbsSender bot) {
-        AddOperationEntity entity = cache.getFromCache(UUID.fromString(id));
-        if (type.equals("0")) {
-            entity.setType(AddOperationEntity.Type.DIVIDE_TO_ALL);
-        } else if (type.equals("1")) {
-            entity.setType(AddOperationEntity.Type.NOT_DIVIDE);
-        }
-        cache.putToCache(entity);
-        InlineKeyboardMarkup markup = buttonBuilder.buildButtons(entity, Stage.SETTING_QTY);
-        EditMessageText text = EditMessageText.builder()
-                .messageId(messageId)
-                .replyMarkup(markup)
-                .text("Ответь на сообщение в формате \"Сумма комментарий\"")
-                .chatId(String.valueOf(chatId))
-                .build();
-        send(text, bot);
-
-    }
-
-    private void inlineCancel(String id, Long chatId, Integer messageId, AbsSender bot) {
-        cache.removeFromCache(UUID.fromString(id));
-        DeleteMessage deleteMessage = DeleteMessage.builder().messageId(messageId).chatId(String.valueOf(chatId)).build();
-        send(deleteMessage, bot);
-    }
-
-    private void inlineNext(String id, Long chatId, Integer messageId, AbsSender bot) {
-        AddOperationEntity entity = cache.getFromCache(UUID.fromString(id));
-        Stage stage = entity.getTo().size() > 1 ? Stage.SETTING_TYPE : Stage.SETTING_QTY;
-        String msg;
-        if (stage == Stage.SETTING_TYPE) {
-            msg = "Выбери тип векселя";
-        } else {
-            msg = "Ответь на сообщение в формате \"Сумма комментарий\"";
-        }
-        InlineKeyboardMarkup buttons = buttonBuilder.buildButtons(entity, stage);
-        EditMessageText text = EditMessageText.builder()
-                .messageId(messageId)
-                .replyMarkup(buttons)
-                .text(msg)
-                .chatId(String.valueOf(chatId))
-                .build();
-        send(text, bot);
     }
 
 

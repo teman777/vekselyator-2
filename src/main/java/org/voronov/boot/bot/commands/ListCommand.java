@@ -10,8 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.voronov.boot.bot.caches.list.ListOperationsCache;
 import org.voronov.boot.bot.caches.list.ListOperationsEntity;
-import org.voronov.boot.bot.commands.core.AbstractCommand;
-import org.voronov.boot.bot.commands.core.InlineHandler;
+import org.voronov.boot.core.AbstractCommand;
 import org.voronov.boot.bot.model.dto.Operation;
 import org.voronov.boot.bot.model.dto.TgChat;
 import org.voronov.boot.bot.services.ChatService;
@@ -24,7 +23,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
-@InlineHandler(inlineCommands = {"cancelList", "nextList", "prevList", "my", "all", "select", "deleteOperations"})
 public class ListCommand extends AbstractCommand {
 
     @Autowired

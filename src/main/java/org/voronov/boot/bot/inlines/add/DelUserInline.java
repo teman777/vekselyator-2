@@ -16,18 +16,19 @@ import org.voronov.boot.core.AbstractInlineHandler;
 import java.util.UUID;
 
 @Component
-public class AddUserInline extends AbstractInlineHandler {
-    @Autowired
-    private AddOperationCache cache;
-
-    @Autowired
-    private AddButtonBuilderService buttonService;
+public class DelUserInline extends AbstractInlineHandler {
 
     @Autowired
     private Bot bot;
 
-    public AddUserInline() {
-        super("adduser");
+    @Autowired
+    private AddOperationCache cache;
+
+    @Autowired
+    private AddButtonBuilderService buttonBuilder;
+
+    public DelUserInline() {
+        super("deluser");
     }
 
     @Override
@@ -38,15 +39,15 @@ public class AddUserInline extends AbstractInlineHandler {
             String id = data[2];
             Long chatId = callbackQuery.getMessage().getChatId();
             Integer messageId = callbackQuery.getMessage().getMessageId();
-            inlineAddUser(userId, id, chatId, messageId);
+            inlineDelUser(userId, id, chatId, messageId);
         }
     }
 
-    private void inlineAddUser(String userId, String id, Long chatId, Integer messageId) {
+    private void inlineDelUser(String userId, String id, Long chatId, Integer messageId) {
         AddOperationEntity entity = cache.getFromCache(UUID.fromString(id));
-        entity.addTo(Long.valueOf(userId));
+        entity.deleteFromTo(Long.valueOf(userId));
         cache.putToCache(entity);
-        InlineKeyboardMarkup markup = buttonService.buildButtons(entity, AddOperationCommand.Stage.ADDING_TO);
+        InlineKeyboardMarkup markup = buttonBuilder.buildButtons(entity, AddOperationCommand.Stage.ADDING_TO);
         EditMessageReplyMarkup edit = EditMessageReplyMarkup.builder()
                 .chatId(String.valueOf(chatId))
                 .messageId(messageId)

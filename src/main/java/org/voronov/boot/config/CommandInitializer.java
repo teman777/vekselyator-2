@@ -1,8 +1,8 @@
 package org.voronov.boot.config;
 
 import org.springframework.beans.factory.InitializingBean;
-import org.voronov.boot.bot.commands.core.AbstractCommand;
-import org.voronov.boot.bot.core.AbstractInlineCommandBot;
+import org.voronov.boot.core.AbstractCommand;
+import org.voronov.boot.core.AbstractInlineCommandBot;
 
 import java.util.List;
 import java.util.Objects;

@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.voronov.boot.bot.caches.operations.AddOperationEntity;
-import org.voronov.boot.bot.exceptions.NoChatException;
 import org.voronov.boot.bot.model.dto.Operation;
 import org.voronov.boot.bot.model.dto.TgChat;
 import org.voronov.boot.bot.model.dto.TgUser;

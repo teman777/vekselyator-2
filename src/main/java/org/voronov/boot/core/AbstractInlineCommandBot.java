@@ -1,9 +1,9 @@
-package org.voronov.boot.bot.core;
+package org.voronov.boot.core;
 
 import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.voronov.boot.bot.inlines.core.AbstractInlineHandler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,8 +12,14 @@ public abstract class AbstractInlineCommandBot extends TelegramLongPollingComman
 
     private Map<String, AbstractInlineHandler> inlineHandlerMap = new HashMap<>();
 
+    private Map<String, AbstractReplyHandler> replyHandlerMap = new HashMap<>();
+
     public void registerInline(AbstractInlineHandler inlineHandler) {
         inlineHandlerMap.put(inlineHandler.getInlineCommand(), inlineHandler);
+    }
+
+    public void registerReply(AbstractReplyHandler replyHandler){
+        replyHandlerMap.put(replyHandler.getRegex(), replyHandler);
     }
 
     private void processInline(CallbackQuery query) {
@@ -24,10 +30,22 @@ public abstract class AbstractInlineCommandBot extends TelegramLongPollingComman
         }
     }
 
+    private void processReply(Message message) {
+        String text = message.getText();
+        for (String regex : replyHandlerMap.keySet()) {
+            if (text.matches(regex)) {
+                AbstractReplyHandler handler = replyHandlerMap.get(regex);
+                handler.handleReply(message);
+            }
+        }
+    }
+
     @Override
     public void processNonCommandUpdate(Update update) {
         if (update.hasCallbackQuery()) {
             processInline(update.getCallbackQuery());
+        } else if (update.getMessage().isReply()) {
+            processReply(update.getMessage());
         } else {
             processNonCommandAndInlineUpdate(update);
         }

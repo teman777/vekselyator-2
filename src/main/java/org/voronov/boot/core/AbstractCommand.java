@@ -1,4 +1,4 @@
-package org.voronov.boot.bot.commands.core;
+package org.voronov.boot.core;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.BotCommand;
