@@ -51,7 +51,7 @@ public class ListCommand extends AbstractCommand {
                     .stream()
                     .map(Operation::getId)
                     .collect(Collectors.toList());
-            ListOperationsEntity entity = new ListOperationsEntity(operations);
+            ListOperationsEntity entity = new ListOperationsEntity(operations, user.getId());
             cache.putToCache(entity);
 
             InlineKeyboardMarkup buttons = buttonBuilder.buildButtons(entity, Stage.SETTING_TYPE);

@@ -17,7 +17,21 @@ public abstract class AbstractInlineHandler {
         return inlineCommand;
     }
 
-    public abstract void handle(CallbackQuery callbackQuery);
+    protected void handleInline(CallbackQuery callbackQuery) {
+        try {
+            if (checkUser(callbackQuery)) {
+                handle(callbackQuery);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean checkUser(CallbackQuery query) {
+        return true;
+    }
+
+    protected abstract void handle(CallbackQuery callbackQuery);
 
     protected void send(BotApiMethod method, AbsSender bot) {
         try {

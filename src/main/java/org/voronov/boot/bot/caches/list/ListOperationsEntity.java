@@ -15,8 +15,8 @@ public class ListOperationsEntity extends CachedEntity {
 
     private Long currentLastOnScreen;
 
-    public ListOperationsEntity(Set<Operation> operations) {
-        super();
+    public ListOperationsEntity(Set<Operation> operations, Long user) {
+        super(user);
 
         selectedOperations = new ArrayList<>();
         operationMap = new HashMap<>();

@@ -15,8 +15,8 @@ public class AddOperationEntity extends CachedEntity {
     private String comment;
     private Type type = Type.FOR_ONE;
 
-    public AddOperationEntity() {
-        super();
+    public AddOperationEntity(Long from) {
+        super(from);
         this.to = Collections.synchronizedList(new ArrayList<>());
     }
 

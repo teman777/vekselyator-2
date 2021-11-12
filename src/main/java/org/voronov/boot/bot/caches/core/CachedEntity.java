@@ -4,9 +4,11 @@ import java.util.UUID;
 
 public abstract class CachedEntity {
     private UUID id;
+    private Long user;
 
-    public CachedEntity() {
+    public CachedEntity(Long user) {
         id = UUID.randomUUID();
+        this.user = user;
     }
 
     public UUID getId() {
@@ -15,5 +17,13 @@ public abstract class CachedEntity {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public Long getUser() {
+        return user;
+    }
+
+    public void setUser(Long user) {
+        this.user = user;
     }
 }

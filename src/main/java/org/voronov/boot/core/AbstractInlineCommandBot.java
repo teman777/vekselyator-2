@@ -26,7 +26,7 @@ public abstract class AbstractInlineCommandBot extends TelegramLongPollingComman
         String command = query.getData().split("/")[0];
         AbstractInlineHandler handler = inlineHandlerMap.get(command);
         if (handler != null) {
-            handler.handle(query);
+            handler.handleInline(query);
         }
     }
 
