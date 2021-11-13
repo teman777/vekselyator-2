@@ -109,7 +109,7 @@ public class AddButtonBuilderService {
         cancelButton.setCallbackData("cancel/" + entity.getId().toString());
         buttons.add(cancelButton);
 
-        if (!entity.getTo().isEmpty()) {
+        if (!entity.getTo().isEmpty() && !(entity.getTo().size() == 1 && entity.getUser().equals(entity.getTo().get(0)))) {
             InlineKeyboardButton continueButton = new InlineKeyboardButton("Далее");
             continueButton.setCallbackData("next/" + entity.getId().toString());
             buttons.add(continueButton);

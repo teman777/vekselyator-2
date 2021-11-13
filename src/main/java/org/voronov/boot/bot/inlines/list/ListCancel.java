@@ -11,12 +11,12 @@ import org.voronov.boot.core.AbstractInlineHandler;
 import java.util.UUID;
 
 @Component
-public class ListCancelInline extends AbstractInlineHandler {
+public class ListCancel extends AbstractInlineHandler {
 
     @Autowired
     private ListOperationsCache cache;
 
-    public ListCancelInline() {
+    public ListCancel() {
         super("cancelList");
     }
 

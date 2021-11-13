@@ -9,12 +9,11 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.voronov.boot.bot.caches.list.ListOperationsCache;
 import org.voronov.boot.bot.caches.list.ListOperationsEntity;
 import org.voronov.boot.bot.commands.ListCommand;
-import org.voronov.boot.bot.services.MessageTextService;
 import org.voronov.boot.bot.services.buttons.ListButtonBuilderService;
 import org.voronov.boot.core.AbstractInlineHandler;
 
 @Component
-public class ListNextInline extends AbstractInlineHandler {
+public class DeselectAll extends AbstractInlineHandler {
 
     @Autowired
     private ListOperationsCache cache;
@@ -22,27 +21,27 @@ public class ListNextInline extends AbstractInlineHandler {
     @Autowired
     private ListButtonBuilderService buttonBuilder;
 
-    @Autowired
-    private MessageTextService textService;
-
-    public ListNextInline() {
-        super("listNext");
+    public DeselectAll() {
+        super("delAll");
     }
 
     @Override
     protected BotApiMethod handle(CallbackQuery callbackQuery) {
         String[] data = getData(callbackQuery);
+        if (data.length == 3) {
+            String userId = data[1];
+            String id = data[2];
 
-        if (data.length == 2) {
-            String id = data[1];
             ListOperationsEntity entity = cache.getFromCache(id);
+            entity.deselectAllForUser(Long.valueOf(userId));
+            cache.putToCache(entity);
 
             InlineKeyboardMarkup markup = buttonBuilder.buildButtons(entity, ListCommand.Stage.LIST_SHOW_MY);
 
             return EditMessageReplyMarkup.builder()
                     .replyMarkup(markup)
-                    .messageId(callbackQuery.getMessage().getMessageId())
                     .chatId(callbackQuery.getMessage().getChatId().toString())
+                    .messageId(callbackQuery.getMessage().getMessageId())
                     .build();
         }
         return null;

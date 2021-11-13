@@ -13,7 +13,7 @@ import org.voronov.boot.bot.services.buttons.ListButtonBuilderService;
 import org.voronov.boot.core.AbstractInlineHandler;
 
 @Component
-public class MyListInline extends AbstractInlineHandler {
+public class SelectCurrentUser extends AbstractInlineHandler {
 
     @Autowired
     private ListOperationsCache cache;
@@ -21,23 +21,28 @@ public class MyListInline extends AbstractInlineHandler {
     @Autowired
     private ListButtonBuilderService buttonBuilder;
 
-    public MyListInline() {
-        super("my");
+    public SelectCurrentUser() {
+        super("selCurUs");
     }
 
     @Override
     protected BotApiMethod handle(CallbackQuery callbackQuery) {
-        String[] data = callbackQuery.getData().split("/");
-        if (data.length == 2) {
-            String id = data[1];
+        String[] data = getData(callbackQuery);
+        if (data.length == 3) {
+            String userId = data[1];
+            String id = data[2];
+
             ListOperationsEntity entity = cache.getFromCache(id);
-            entity.setType(ListOperationsEntity.Type.MY);
-            InlineKeyboardMarkup markup = buttonBuilder.buildButtons(entity, ListCommand.Stage.LIST_MY);
+            entity.setCurrentSelectedUser(Long.valueOf(userId));
             cache.putToCache(entity);
+
+            InlineKeyboardMarkup markup = buttonBuilder.buildButtons(entity, ListCommand.Stage.LIST_SHOW_MY);
+
             return EditMessageReplyMarkup.builder()
-                    .chatId(callbackQuery.getMessage().getChatId().toString())
                     .replyMarkup(markup)
-                    .messageId(callbackQuery.getMessage().getMessageId()).build();
+                    .messageId(callbackQuery.getMessage().getMessageId())
+                    .chatId(callbackQuery.getMessage().getChatId().toString())
+                    .build();
         }
         return null;
     }

@@ -11,10 +11,7 @@ import org.voronov.boot.bot.model.dto.Operation;
 import org.voronov.boot.bot.model.dto.TgUser;
 import org.voronov.boot.bot.services.MessageTextService;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class ListButtonBuilderService {
@@ -67,35 +64,66 @@ public class ListButtonBuilderService {
     }
 
     private List<List<InlineKeyboardButton>> buildButtonsForShowMy(ListOperationsEntity entity) {
-        List<InlineKeyboardButton> buttons = new ArrayList<>();
-        LinkedHashMap<TgUser, List<Operation>> operations = entity.getOperationsByUsers();
-        for (TgUser user : operations.keySet()) {
+        List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
+        LinkedHashMap<TgUser, List<Operation>> operations = entity.getOperationsBySelectedUsers();
+        Optional<TgUser> currentUser = entity.getSelectedTgUser();
+        if (currentUser.isPresent()) {
+            TgUser user = currentUser.get();
             List<Operation> operationList = operations.get(user);
-            List<InlineKeyboardButton> buttonsRow = new ArrayList<>();
-            buttonsRow.add(buildFakeButton(user.getBrief()));
-            buttonsRow.addAll(buildButtonsForShowMy(operationList, entity.getUser(), entity.getId().toString()));
-            buttons.addAll(buttonsRow);
+
+            buttons.add(buildUserRowUnselected(entity));
+
+            buttons.add(Collections.singletonList(buildSelectAllForUser(user, entity.getId().toString(), entity.isAllSelectedForCurrent())));
+            List<InlineKeyboardButton> operationsButton = buildButtonsForShowMy(operationList, entity.getSelectedOperations(), entity.getUser(), entity.getId().toString());
+            buttons.addAll(new ArrayList<>(ListUtils.partition(operationsButton, 1)));
         }
 
-        return new ArrayList<>(ListUtils.partition(buttons, 1));
+        return buttons;
     }
 
-    private List<InlineKeyboardButton> buildButtonsForShowMy(List<Operation> operations, Long userId, String entityId) {
+    private List<InlineKeyboardButton> buildUserRowUnselected(ListOperationsEntity entity) {
         List<InlineKeyboardButton> buttons = new ArrayList<>();
-        for (Operation operation : operations) {
-            String text = operation.getuFrom().getUser().getId().equals(userId)
-                    ? textService.buildOperationButtonText(operation)
-                    : textService.buildOperationNegativeButtonText(operation);
+        for (TgUser tgUser : entity.getUnselectedUsers()) {
             buttons.add(InlineKeyboardButton.builder()
-                    .text(text)
-                    .callbackData("selectOperation/" + operation.getId().toString() + "/" + entityId)
+                    .text(tgUser.getBrief())
+                    .callbackData("selCurUs/" + tgUser.getId().toString() + "/" + entity.getId().toString())
                     .build());
         }
         return buttons;
     }
 
-    private InlineKeyboardButton buildFakeButton(String s) {
-        return InlineKeyboardButton.builder().text(s).callbackData("nothing/").build();
+    private List<InlineKeyboardButton> buildButtonsForShowMy(List<Operation> operations, List<Long> selected, Long userId, String entityId) {
+        List<InlineKeyboardButton> buttons = new ArrayList<>();
+        for (Operation operation : operations) {
+            String text = operation.getuFrom().getUser().getId().equals(userId)
+                    ? textService.buildOperationButtonText(operation)
+                    : textService.buildOperationNegativeButtonText(operation);
+
+            String callback = "selOp/" + operation.getId().toString() + "/" + entityId;
+            if (selected.contains(operation.getId())) {
+                text += " " + new String(Character.toChars(0x2705));
+                callback = callback.replace("selOp/", "delOp/");
+            }
+
+            buttons.add(InlineKeyboardButton.builder()
+                    .text(text)
+                    .callbackData(callback)
+                    .build());
+        }
+        return buttons;
+    }
+
+    private InlineKeyboardButton buildSelectAllForUser(TgUser user, String id, boolean isAllSelected) {
+        String text = !isAllSelected
+                ? user.getBrief() + " ⬇"
+                : new String(Character.toChars(0x2705)) + user.getBrief() + " ⬇";
+        String callback = !isAllSelected
+                ? "selAll/" + user.getId().toString() + "/" + id
+                : "delAll/" + user.getId().toString() + "/" + id;
+
+        return InlineKeyboardButton.builder()
+                .text(text)
+                .callbackData(callback).build();
     }
 
     private InlineKeyboardMarkup buildForShow(ListOperationsEntity entity) {
@@ -111,7 +139,7 @@ public class ListButtonBuilderService {
 
     private List<List<InlineKeyboardButton>> buildUsers(ListOperationsEntity entity) {
         List<InlineKeyboardButton> usersButtons = new ArrayList<>();
-        for (TgUser user : entity.getAnotherUsersInChat()) {
+        for (TgUser user : entity.getUsersHaveOperations()) {
             boolean needToMark = entity.isUserSelected(user);
             usersButtons.add(buildUserButton(user, needToMark, entity.getId().toString()));
         }
@@ -136,7 +164,9 @@ public class ListButtonBuilderService {
                 .text(needToMark
                         ? user.getBrief() + " " + new String(Character.toChars(0x2705))
                         : user.getBrief())
-                .callbackData("listSelectUser/" + user.getId().toString() + "/" + entityId)
+                .callbackData(!needToMark
+                        ? "listSelectUser/" + user.getId().toString() + "/" + entityId
+                        : "listDeselectUser/" + user.getId().toString() + "/" + entityId)
                 .build();
     }
 
@@ -146,20 +176,4 @@ public class ListButtonBuilderService {
                 .callbackData("cancelList/" + entity.getId().toString())
                 .build();
     }
-
-    private InlineKeyboardMarkup buildList(ListOperationsEntity entity) {
-        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
-        List<List<InlineKeyboardButton>> buttons = buildButtonsOperations(entity);
-        buttons.add(Collections.singletonList(buildCancel(entity)));
-        markup.setKeyboard(buttons);
-        return markup;
-    }
-
-    private List<List<InlineKeyboardButton>> buildButtonsOperations(ListOperationsEntity entity) {
-
-
-        return null;
-    }
-
-
 }

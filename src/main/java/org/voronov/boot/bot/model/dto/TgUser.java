@@ -1,8 +1,11 @@
 package org.voronov.boot.bot.model.dto;
 
 
-import javax.persistence.*;
-import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.util.Objects;
 
 @Entity
 @Table(name = "Users")
@@ -36,5 +39,18 @@ public class TgUser {
 
     public void setBrief(String brief) {
         this.brief = brief;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TgUser)) return false;
+        TgUser tgUser = (TgUser) o;
+        return id.equals(tgUser.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
