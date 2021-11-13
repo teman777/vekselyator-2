@@ -4,7 +4,7 @@ import java.util.UUID;
 
 public abstract class CachedEntity {
     private UUID id;
-    private Long user;
+    protected Long user;
 
     public CachedEntity(Long user) {
         id = UUID.randomUUID();

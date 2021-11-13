@@ -2,10 +2,10 @@ package org.voronov.boot.bot.inlines.add;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.voronov.boot.bot.Bot;
 import org.voronov.boot.bot.caches.operations.AddOperationCache;
 import org.voronov.boot.bot.caches.operations.AddOperationEntity;
 import org.voronov.boot.bot.commands.AddOperationCommand;
@@ -18,9 +18,6 @@ import java.util.UUID;
 public class SetTypeInline extends AbstractInlineHandler {
 
     @Autowired
-    private Bot bot;
-
-    @Autowired
     private AddButtonBuilderService buttonBuilder;
 
     @Autowired
@@ -31,18 +28,19 @@ public class SetTypeInline extends AbstractInlineHandler {
     }
 
     @Override
-    public void handle(CallbackQuery callbackQuery) {
+    public BotApiMethod handle(CallbackQuery callbackQuery) {
         String[] data = callbackQuery.getData().split("/");
         if (data.length == 3) {
             String type = data[1];
             String id = data[2];
             Long chatId = callbackQuery.getMessage().getChatId();
             Integer messageId = callbackQuery.getMessage().getMessageId();
-            inlineSetType(type, id, chatId, messageId);
+            return inlineSetType(type, id, chatId, messageId);
         }
+        return null;
     }
 
-    private void inlineSetType(String type, String id, Long chatId, Integer messageId) {
+    private BotApiMethod inlineSetType(String type, String id, Long chatId, Integer messageId) {
         AddOperationEntity entity = cache.getFromCache(UUID.fromString(id));
         if (type.equals("0")) {
             entity.setType(AddOperationEntity.Type.DIVIDE_TO_ALL);
@@ -51,13 +49,11 @@ public class SetTypeInline extends AbstractInlineHandler {
         }
         cache.putToCache(entity);
         InlineKeyboardMarkup markup = buttonBuilder.buildButtons(entity, AddOperationCommand.Stage.SETTING_QTY);
-        EditMessageText text = EditMessageText.builder()
+        return EditMessageText.builder()
                 .messageId(messageId)
                 .replyMarkup(markup)
                 .text("Ответь на сообщение в формате \"Сумма комментарий\"")
                 .chatId(String.valueOf(chatId))
                 .build();
-        send(text, bot);
-
     }
 }

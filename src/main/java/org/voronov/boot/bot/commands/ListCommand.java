@@ -10,6 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.voronov.boot.bot.caches.list.ListOperationsCache;
 import org.voronov.boot.bot.caches.list.ListOperationsEntity;
+import org.voronov.boot.bot.model.dto.TgUser;
 import org.voronov.boot.core.AbstractCommand;
 import org.voronov.boot.bot.model.dto.Operation;
 import org.voronov.boot.bot.model.dto.TgChat;
@@ -47,11 +48,8 @@ public class ListCommand extends AbstractCommand {
         if (findedChat.isPresent()) {
             TgChat tgChat = findedChat.get();
             Set<Operation> operations = tgChat.getAllChatsOperations();
-            List<Long> allOperations = tgChat.getAllChatsOperations()
-                    .stream()
-                    .map(Operation::getId)
-                    .collect(Collectors.toList());
-            ListOperationsEntity entity = new ListOperationsEntity(operations, user.getId());
+            Set<TgUser> users = tgChat.getAllUsersInChat();
+            ListOperationsEntity entity = new ListOperationsEntity(operations, users, user.getId());
             cache.putToCache(entity);
 
             InlineKeyboardMarkup buttons = buttonBuilder.buildButtons(entity, Stage.SETTING_TYPE);
@@ -76,6 +74,7 @@ public class ListCommand extends AbstractCommand {
     public enum Stage {
         SETTING_TYPE,
         LIST_MY,
-        LIST_ALL;
+        LIST_SHOW_ALL,
+        LIST_SHOW_MY;
     }
 }

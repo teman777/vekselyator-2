@@ -1,13 +1,18 @@
 package org.voronov.boot.core;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.voronov.boot.bot.Bot;
 
 public abstract class AbstractInlineHandler {
 
     private String inlineCommand;
+
+    @Autowired
+    private Bot bot;
 
     public AbstractInlineHandler(String inlineCommand) {
         this.inlineCommand = inlineCommand;
@@ -20,7 +25,10 @@ public abstract class AbstractInlineHandler {
     protected void handleInline(CallbackQuery callbackQuery) {
         try {
             if (checkUser(callbackQuery)) {
-                handle(callbackQuery);
+                BotApiMethod method = handle(callbackQuery);
+                if (method != null) {
+                    send(method, bot);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -31,7 +39,7 @@ public abstract class AbstractInlineHandler {
         return true;
     }
 
-    protected abstract void handle(CallbackQuery callbackQuery);
+    protected abstract BotApiMethod handle(CallbackQuery callbackQuery);
 
     protected void send(BotApiMethod method, AbsSender bot) {
         try {
@@ -39,5 +47,9 @@ public abstract class AbstractInlineHandler {
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
+    }
+
+    protected String[] getData(CallbackQuery query) {
+        return query.getData().split("/");
     }
 }

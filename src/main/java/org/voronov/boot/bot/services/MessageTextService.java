@@ -4,12 +4,18 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.voronov.boot.bot.model.dto.Operation;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
 @Service
 public class MessageTextService {
 
     private static final String REGISTER_TEMPLATE = "Зарегал %s";
     private static final String ADD_OPERATION_TEMPLATE = "Вексель добавлен.";
-    private static final String OPERATION_TEMPLATE = "%s -> %s (%.2f)\n%s";
+    private static final String OPERATION_TEMPLATE = "%s -> %s (%.2f) %s\n";
+    private static final String OPERATION_BUTTON_TEMPLATE = "%.2f %s";
+    private static final String OPERATION_BUTTON_NEGATIVE_TEMPLATE = "-%.2f %s";
     private static final String WRONG_USER_ADD = "Не твое дело, проходи мимо.";
     private static final String LIST_WELCOME = "Выбери, что показать.";
 
@@ -64,5 +70,26 @@ public class MessageTextService {
             }
         }
         return brief;
+    }
+
+    public String buildOperationTextForMessage(Collection<Operation> operations) {
+        StringBuilder text = new StringBuilder();
+
+        for (Iterator<Operation> iterator = operations.iterator(); iterator.hasNext(); ) {
+            Operation operation = iterator.next();
+            text.append(getTextForOperation(operation));
+            if (iterator.hasNext()) {
+                text.append("----------------------\n");
+            }
+        }
+        return text.toString();
+    }
+
+    public String buildOperationButtonText(Operation operation) {
+        return String.format(OPERATION_BUTTON_TEMPLATE, operation.getQty(), operation.getComment());
+    }
+
+    public String buildOperationNegativeButtonText(Operation operation) {
+        return String.format(OPERATION_BUTTON_NEGATIVE_TEMPLATE, operation.getQty(), operation.getComment());
     }
 }

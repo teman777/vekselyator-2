@@ -40,4 +40,11 @@ public abstract class Cache<T extends CachedEntity> {
         }
         return null;
     }
+
+    public T getFromCache(String id) {
+        if (id != null) {
+            return cacheMap.get(UUID.fromString(id));
+        }
+        return null;
+    }
 }
