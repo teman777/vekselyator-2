@@ -1,5 +1,7 @@
 package org.voronov.boot.bot.caches.list;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.voronov.boot.bot.caches.core.CachedEntity;
 import org.voronov.boot.bot.model.dto.Operation;
 import org.voronov.boot.bot.model.dto.TgUser;
@@ -25,10 +27,11 @@ public class ListOperationsEntity extends CachedEntity {
         super(user);
         this.usersInChat.addAll(usersInChat);
         operations.forEach(a -> operationMap.put(a.getId(), a));
-        buildUserMap();
+        buildMaps();
     }
 
-    private void buildUserMap() {
+    private void buildMaps() {
+        tgUserListMap.clear();
         List<Operation> byUser = operationMap.values()
                 .stream()
                 .filter(a -> a.getuTo().getUser().getId().equals(user)
@@ -77,6 +80,8 @@ public class ListOperationsEntity extends CachedEntity {
             selectedOperations.addAll(allSelected);
         }
     }
+
+
     public void deselectAllForUser(Long userId) {
         Optional<TgUser> optUser = usersInChat.stream().filter(a -> a.getId().equals(userId)).findFirst();
         if (optUser.isPresent()) {
@@ -89,6 +94,10 @@ public class ListOperationsEntity extends CachedEntity {
                     .collect(Collectors.toList());
             selectedOperations.removeAll(allSelected);
         }
+    }
+
+    public void deselectOperation(Long operationId) {
+        selectedOperations.remove(operationId);
     }
 
     public Long getCurrentSelectedUser() {
@@ -147,6 +156,26 @@ public class ListOperationsEntity extends CachedEntity {
             currentSelectedUser = 0L;
         }
         selectedUsers.remove(userId);
+    }
+
+    public void deleteSelectedOperations() {
+        for (Long id : selectedOperations) {
+            operationMap.remove(id);
+        }
+        selectedOperations.clear();
+        buildMaps();
+        Optional<TgUser> currentUser = usersInChat.stream().filter(a -> a.getId().equals(currentSelectedUser)).findFirst();
+        if (currentUser.isPresent()) {
+            if (CollectionUtils.isEmpty(tgUserListMap.get(currentUser.get()))) {
+                if (tgUserListMap.keySet().size() > 0) {
+                    currentSelectedUser = tgUserListMap.keySet().stream().findFirst().get().getId();
+                } else {
+                    currentSelectedUser = 0L;
+                }
+            }
+        } else {
+            currentSelectedUser = 0L;
+        }
     }
 
     public Type getType() {

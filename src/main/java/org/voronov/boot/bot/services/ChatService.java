@@ -83,6 +83,11 @@ public class ChatService {
         }
     }
 
+    @Transactional
+    public void deleteOperations(List<Long> operations) {
+        operationRepository.deleteAllById(operations);
+    }
+
     public void createOperationFromEntity(AddOperationEntity entity) {
         Optional<TgChat> findedChat = findChat(entity.getChat());
         if (findedChat.isPresent()) {

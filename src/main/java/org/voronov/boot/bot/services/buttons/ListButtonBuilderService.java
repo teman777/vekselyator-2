@@ -58,9 +58,26 @@ public class ListButtonBuilderService {
     private InlineKeyboardMarkup buildForShowMy(ListOperationsEntity entity) {
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> buttons = buildButtonsForShowMy(entity);
-        buttons.add(Collections.singletonList(buildCancel(entity)));
+        List<InlineKeyboardButton> bottomButtons = buildBottomForShowMy(entity);
+        buttons.add(bottomButtons);
         markup.setKeyboard(buttons);
         return markup;
+    }
+
+    private List<InlineKeyboardButton> buildBottomForShowMy(ListOperationsEntity entity) {
+        List<InlineKeyboardButton> buttons = new ArrayList<>();
+        buttons.add(buildCancel(entity));
+        if (!entity.getSelectedOperations().isEmpty()) {
+            buttons.add(buildDeleteButton(entity));
+        }
+        return buttons;
+    }
+
+    private InlineKeyboardButton buildDeleteButton(ListOperationsEntity entity) {
+        return InlineKeyboardButton.builder()
+                .callbackData("listDelSl/" + entity.getId().toString())
+                .text("Удалить")
+                .build();
     }
 
     private List<List<InlineKeyboardButton>> buildButtonsForShowMy(ListOperationsEntity entity) {
@@ -102,7 +119,7 @@ public class ListButtonBuilderService {
             String callback = "selOp/" + operation.getId().toString() + "/" + entityId;
             if (selected.contains(operation.getId())) {
                 text += " " + new String(Character.toChars(0x2705));
-                callback = callback.replace("selOp/", "delOp/");
+                callback = callback.replace("selOp/", "dslOp/");
             }
 
             buttons.add(InlineKeyboardButton.builder()
