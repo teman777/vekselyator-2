@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.voronov.boot.bot.caches.list.ListOperationsCache;
@@ -38,15 +39,27 @@ public class DeleteSelected extends AbstractInlineHandler {
             ListOperationsEntity entity = cache.getFromCache(id);
             chatService.deleteOperations(entity.getSelectedOperations());
             entity.deleteSelectedOperations();
-            cache.putToCache(entity);
+            if (!entity.isNothingToShowMy()) {
+                cache.putToCache(entity);
+            } else {
+                cache.removeFromCache(entity.getId());
+            }
 
             InlineKeyboardMarkup markup = buttonBuilder.buildButtons(entity, ListCommand.Stage.LIST_SHOW_MY);
-
-            return EditMessageReplyMarkup.builder()
-                    .messageId(callbackQuery.getMessage().getMessageId())
-                    .chatId(callbackQuery.getMessage().getChatId().toString())
-                    .replyMarkup(markup)
-                    .build();
+            if (entity.isNothingToShowMy()) {
+                return EditMessageText.builder()
+                        .chatId(callbackQuery.getMessage().getChatId().toString())
+                        .messageId(callbackQuery.getMessage().getMessageId())
+                        .text("Нет векселей для выбранных пользователей")
+                        .replyMarkup(markup)
+                        .build();
+            } else {
+                return EditMessageReplyMarkup.builder()
+                        .messageId(callbackQuery.getMessage().getMessageId())
+                        .chatId(callbackQuery.getMessage().getChatId().toString())
+                        .replyMarkup(markup)
+                        .build();
+            }
         }
         return null;
     }

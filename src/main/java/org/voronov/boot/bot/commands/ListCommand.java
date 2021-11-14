@@ -54,10 +54,16 @@ public class ListCommand extends AbstractCommand {
 
             InlineKeyboardMarkup buttons = buttonBuilder.buildButtons(entity, Stage.SETTING_TYPE);
 
+            String text = textService.getListWelcome();
+
+            if (entity.isNothingToShowAll()) {
+                text = "Векселей в этом чате нет";
+            }
+
             SendMessage sm = SendMessage.builder()
                     .chatId(chat.getId().toString())
                     .replyMarkup(buttons)
-                    .text(textService.getListWelcome())
+                    .text(text)
                     .build();
 
             send(sm, absSender);

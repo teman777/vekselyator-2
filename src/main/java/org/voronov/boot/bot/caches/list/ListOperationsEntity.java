@@ -1,7 +1,6 @@
 package org.voronov.boot.bot.caches.list;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.ListUtils;
 import org.voronov.boot.bot.caches.core.CachedEntity;
 import org.voronov.boot.bot.model.dto.Operation;
 import org.voronov.boot.bot.model.dto.TgUser;
@@ -156,6 +155,14 @@ public class ListOperationsEntity extends CachedEntity {
             currentSelectedUser = 0L;
         }
         selectedUsers.remove(userId);
+    }
+
+    public boolean isNothingToShowMy() {
+        return tgUserListMap.isEmpty();
+    }
+
+    public boolean isNothingToShowAll() {
+        return operationMap.isEmpty();
     }
 
     public void deleteSelectedOperations() {

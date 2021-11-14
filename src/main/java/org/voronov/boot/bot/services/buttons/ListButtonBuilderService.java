@@ -36,20 +36,25 @@ public class ListButtonBuilderService {
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
         List<InlineKeyboardButton> buttonRow = new ArrayList<>();
-        InlineKeyboardButton myButton = InlineKeyboardButton.builder()
-                .text("Открыть мои")
-                .callbackData("my/" + entity.getId().toString())
-                .build();
-        InlineKeyboardButton allButton = InlineKeyboardButton.builder()
-                .text("Открыть все")
-                .callbackData("all/" + entity.getId().toString())
-                .build();
 
-        buttonRow.add(myButton);
-        buttonRow.add(allButton);
-        buttons.add(buttonRow);
+        if (!entity.isNothingToShowMy()) {
+            InlineKeyboardButton myButton = InlineKeyboardButton.builder()
+                    .text("Открыть мои")
+                    .callbackData("my/" + entity.getId().toString())
+                    .build();
+            buttonRow.add(myButton);
+        }
 
-
+        if (!entity.isNothingToShowAll()) {
+            InlineKeyboardButton allButton = InlineKeyboardButton.builder()
+                    .text("Открыть все")
+                    .callbackData("all/" + entity.getId().toString())
+                    .build();
+            buttonRow.add(allButton);
+        }
+        if (!buttonRow.isEmpty()) {
+            buttons.add(buttonRow);
+        }
         buttons.add(Collections.singletonList(buildCancel(entity)));
         markup.setKeyboard(buttons);
         return markup;
