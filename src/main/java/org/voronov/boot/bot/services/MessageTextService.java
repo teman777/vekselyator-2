@@ -46,8 +46,8 @@ public class MessageTextService {
 
     public String getTextForOperation(Operation operation) {
         return String.format(OPERATION_TEMPLATE,
-                operation.getuFrom().getUser().getBrief(),
                 operation.getuTo().getUser().getBrief(),
+                operation.getuFrom().getUser().getBrief(),
                 operation.getQty(),
                 operation.getComment());
     }
