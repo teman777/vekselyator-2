@@ -137,8 +137,8 @@ public class ListButtonBuilderService {
 
     private InlineKeyboardButton buildSelectAllForUser(TgUser user, String id, boolean isAllSelected) {
         String text = !isAllSelected
-                ? user.getBrief() + " ⬇"
-                : new String(Character.toChars(0x2705)) + user.getBrief() + " ⬇";
+                ? "⬇ " + user.getBrief()
+                : "⬇ " + user.getBrief() + " " +new String(Character.toChars(0x2705));
         String callback = !isAllSelected
                 ? "selAll/" + user.getId().toString() + "/" + id
                 : "delAll/" + user.getId().toString() + "/" + id;
