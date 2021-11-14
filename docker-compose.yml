@@ -1,12 +1,19 @@
 version: "3.3"
 services:
-        bot-db-server:
-                build: ./db
-               
-                ports:
-                        - "3306:3306" 
-                volumes:
-                        - ./db/data_volume:/var/lib/mysql
+  bot-db-server:
+    build: ./db
+
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db/data_volume:/var/lib/mysql
+
+  backend:
+    build: ./
+    ports:
+      - "8080:8080"
+    depends_on:
+      - bot-db-server
 
 
 
