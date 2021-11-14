@@ -66,6 +66,24 @@ public class ListOperationsEntity extends CachedEntity {
         return result;
     }
 
+    public Double getBalanceForCurrent() {
+        Optional<TgUser> optUser = usersInChat.stream().filter(a -> a.getId().equals(currentSelectedUser)).findFirst();
+        Double result = 0D;
+        if (optUser.isPresent()) {
+            TgUser tgUser = optUser.get();
+            List<Operation> operations = tgUserListMap.get(tgUser);
+            for (Operation op: operations) {
+                if (op.getuTo().getUser().getId().equals(tgUser.getId())) {
+                    result += Math.abs(op.getQty());
+                } else {
+                    result -= Math.abs(op.getQty());
+                }
+            }
+
+        }
+        return result;
+    }
+
     public void selectAllForUser(Long userId) {
         Optional<TgUser> optUser = usersInChat.stream().filter(a -> a.getId().equals(userId)).findFirst();
         if (optUser.isPresent()) {
@@ -214,8 +232,9 @@ public class ListOperationsEntity extends CachedEntity {
     }
 
     public List<TgUser> getUnselectedUsers() {
-        return tgUserListMap.keySet()
+        return usersInChat
                 .stream()
+                .filter(a -> selectedUsers.contains(a.getId()))
                 .filter(a -> !a.getId().equals(currentSelectedUser))
                 .collect(Collectors.toList());
     }

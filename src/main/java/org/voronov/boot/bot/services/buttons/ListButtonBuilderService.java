@@ -95,7 +95,7 @@ public class ListButtonBuilderService {
 
             buttons.add(buildUserRowUnselected(entity));
 
-            buttons.add(Collections.singletonList(buildSelectAllForUser(user, entity.getId().toString(), entity.isAllSelectedForCurrent())));
+            buttons.add(Collections.singletonList(buildSelectAllForUser(user, entity.getId().toString(), entity.isAllSelectedForCurrent(), entity.getBalanceForCurrent())));
             List<InlineKeyboardButton> operationsButton = buildButtonsForShowMy(operationList, entity.getSelectedOperations(), entity.getUser(), entity.getId().toString());
             buttons.addAll(new ArrayList<>(ListUtils.partition(operationsButton, 1)));
         }
@@ -135,10 +135,10 @@ public class ListButtonBuilderService {
         return buttons;
     }
 
-    private InlineKeyboardButton buildSelectAllForUser(TgUser user, String id, boolean isAllSelected) {
+    private InlineKeyboardButton buildSelectAllForUser(TgUser user, String id, boolean isAllSelected, Double qty) {
         String text = !isAllSelected
-                ? "⬇ " + user.getBrief()
-                : "⬇ " + user.getBrief() + " " +new String(Character.toChars(0x2705));
+                ? String.format("(%.2f)", qty) + "⬇ " + user.getBrief()
+                : String.format("(%.2f)", qty) + "⬇ " + user.getBrief() + " " + new String(Character.toChars(0x2705));
         String callback = !isAllSelected
                 ? "selAll/" + user.getId().toString() + "/" + id
                 : "delAll/" + user.getId().toString() + "/" + id;

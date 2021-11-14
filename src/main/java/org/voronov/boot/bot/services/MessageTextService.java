@@ -14,6 +14,7 @@ public class MessageTextService {
     private static final String REGISTER_TEMPLATE = "Зарегал %s";
     private static final String ADD_OPERATION_TEMPLATE = "Вексель добавлен.";
     private static final String OPERATION_TEMPLATE = "%s -> %s (%.2f) %s\n";
+    private static final String SALDO_TEMPLATE = "%s -> %s (%.2f)";
     private static final String OPERATION_BUTTON_TEMPLATE = "%.2f %s";
     private static final String OPERATION_BUTTON_NEGATIVE_TEMPLATE = "-%.2f %s";
     private static final String WRONG_USER_ADD = "Не твое дело, проходи мимо.";
@@ -23,8 +24,6 @@ public class MessageTextService {
             "/start - Зарегистрироваться в этом чате. Можно обновить свой ник\n" +
             "/add - Добавить вексель. Жми это, если тебе задолжали.\n" +
             "/list - Меню по просмотру векселей.\n" +
-            "/my - Список векселей, где ты участвуешь.\n" +
-            "/all - Список вообще всех векселей в этом чате.\n" +
             "/saldo - Расчитать общее сальдо для всех участников чата.\n";
 
     private static final String ERROR = "Произошла какая-то ебала, я ничего не сделал :(";
@@ -86,10 +85,14 @@ public class MessageTextService {
     }
 
     public String buildOperationButtonText(Operation operation) {
-        return String.format(OPERATION_BUTTON_TEMPLATE, operation.getQty(), operation.getComment());
+        return String.format(OPERATION_BUTTON_TEMPLATE, operation.getQty(), operation.getComment() == null ? "" : operation.getComment());
     }
 
     public String buildOperationNegativeButtonText(Operation operation) {
-        return String.format(OPERATION_BUTTON_NEGATIVE_TEMPLATE, operation.getQty(), operation.getComment());
+        return String.format(OPERATION_BUTTON_NEGATIVE_TEMPLATE, operation.getQty(), operation.getComment() == null ? "" : operation.getComment());
+    }
+
+    public String buildTextForSaldo(Operation operation) {
+        return String.format(SALDO_TEMPLATE, operation.getuTo().getUser().getBrief(), operation.getuFrom().getUser().getBrief() ,operation.getQty());
     }
 }

@@ -1,17 +1,25 @@
 package org.voronov.boot.bot.services;
 
 import org.springframework.stereotype.Service;
+import org.voronov.boot.bot.caches.saldo.SaldoEntity;
 import org.voronov.boot.bot.model.dto.Operation;
 import org.voronov.boot.bot.model.dto.UserChat;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class SaldoService {
 
+    public void optimize(SaldoEntity entity) {
+        Set<Operation> saldo = optimize(entity.getOperationMap().values());
+        entity.setSaldoAll(saldo);
+    }
+
     public Set<Operation> optimize(Collection<Operation> operationList) {
         Map<UserChat, Double> userAndBalance = buildUserMap(operationList);
-        Set<Operation> newOperations = new HashSet<>();
+        Set<Operation> newOperations = new LinkedHashSet<>();
+        long id = 1;
 
         boolean saldoIsReady = false;
 
@@ -47,7 +55,8 @@ public class SaldoService {
                     userAndBalance.remove(minUser);
                 }
             }
-            //todo need to do something with id
+            saldo.setId(id);
+            id++;
             newOperations.add(saldo);
 
             if (userAndBalance.keySet().isEmpty()) {
@@ -74,7 +83,7 @@ public class SaldoService {
     }
 
     private static Map<UserChat, Double> buildUserMap(Collection<Operation> operations) {
-        Map<UserChat, Double> userAndBalance = new HashMap<>();
+        Map<UserChat, Double> userAndBalance = new LinkedHashMap<>();
         operations.forEach(operation -> {
             UserChat from = operation.getuFrom();
             UserChat to = operation.getuTo();
@@ -99,6 +108,16 @@ public class SaldoService {
             userAndBalance.put(to, qtyTo);
 
         });
+        List<UserChat> needToRemove = userAndBalance.entrySet()
+                .stream()
+                .filter(a -> a.getValue() == null || a.getValue() == 0)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+
+        for (UserChat uc : needToRemove) {
+            userAndBalance.remove(uc);
+        }
+
         return userAndBalance;
     }
 

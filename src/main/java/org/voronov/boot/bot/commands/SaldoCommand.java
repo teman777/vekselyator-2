@@ -7,37 +7,36 @@ import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.bots.AbsSender;
-import org.voronov.boot.bot.Bot;
-import org.voronov.boot.bot.caches.operations.AddOperationCache;
-import org.voronov.boot.bot.caches.operations.AddOperationEntity;
+import org.voronov.boot.bot.caches.saldo.SaldoCache;
+import org.voronov.boot.bot.caches.saldo.SaldoEntity;
+import org.voronov.boot.bot.model.dto.Operation;
 import org.voronov.boot.bot.model.dto.TgChat;
+import org.voronov.boot.bot.model.dto.TgUser;
 import org.voronov.boot.bot.services.ChatService;
-import org.voronov.boot.bot.services.MessageTextService;
-import org.voronov.boot.bot.services.buttons.AddButtonBuilderService;
+import org.voronov.boot.bot.services.SaldoService;
+import org.voronov.boot.bot.services.buttons.SaldoButtonBuilderService;
 import org.voronov.boot.core.AbstractCommand;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Component
-public class AddOperationCommand extends AbstractCommand {
+public class SaldoCommand extends AbstractCommand {
 
     @Autowired
-    private AddOperationCache cache;
-
-    @Autowired
-    private AddButtonBuilderService buttonBuilder;
+    private SaldoService saldoService;
 
     @Autowired
     private ChatService chatService;
 
     @Autowired
-    private MessageTextService messageTextService;
+    private SaldoCache cache;
 
     @Autowired
-    private Bot bot;
+    private SaldoButtonBuilderService buttonBuilder;
 
-    public AddOperationCommand() {
-        super("add", "Добавить вексель");
+    public SaldoCommand() {
+        super("saldo", "Взаимовычет");
     }
 
     @Override
@@ -45,23 +44,25 @@ public class AddOperationCommand extends AbstractCommand {
         Optional<TgChat> findedChat = chatService.findChat(chat.getId());
         if (findedChat.isPresent()) {
             TgChat tgChat = findedChat.get();
-            AddOperationEntity entity = new AddOperationEntity(user.getId(), tgChat.getAllUsersInChat());
-            entity.setFrom(user.getId());
-            entity.setChat(chat.getId());
+            Set<Operation> operations = tgChat.getAllChatsOperations();
+            Set<TgUser> users = tgChat.getAllUsersInChat();
+            SaldoEntity entity = new SaldoEntity(operations, users, user.getId());
+            saldoService.optimize(entity);
             cache.putToCache(entity);
-            InlineKeyboardMarkup markup = buttonBuilder.buildButtons(entity, Stage.ADDING_TO);
-            SendMessage message = SendMessage.builder()
-                    .text("Добавляем вексель")
+
+            InlineKeyboardMarkup markup = buttonBuilder.buildButtons(entity, Stage.SHOW);
+
+            SendMessage sm = SendMessage.builder()
+                    .chatId(chat.getId().toString())
                     .replyMarkup(markup)
-                    .chatId(String.valueOf(chat.getId()))
+                    .text("Взаимный расчет")
                     .build();
-            send(message, bot);
+
+            send(sm, absSender);
         }
     }
 
     public enum Stage {
-        ADDING_TO,
-        SETTING_TYPE,
-        SETTING_QTY
+        SHOW, CONFIRM, YES;
     }
 }

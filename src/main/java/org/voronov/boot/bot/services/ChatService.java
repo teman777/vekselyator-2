@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.voronov.boot.bot.caches.operations.AddOperationEntity;
+import org.voronov.boot.bot.caches.saldo.SaldoEntity;
 import org.voronov.boot.bot.model.dto.Operation;
 import org.voronov.boot.bot.model.dto.TgChat;
 import org.voronov.boot.bot.model.dto.TgUser;
@@ -86,6 +87,12 @@ public class ChatService {
     @Transactional
     public void deleteOperations(List<Long> operations) {
         operationRepository.deleteAllById(operations);
+    }
+
+    @Transactional
+    public void removeWithSaldo(SaldoEntity entity) {
+        operationRepository.deleteAllById(entity.getOperationMap().keySet());
+        operationRepository.saveAll(entity.getUnselectedSaldo());
     }
 
     public void createOperationFromEntity(AddOperationEntity entity) {

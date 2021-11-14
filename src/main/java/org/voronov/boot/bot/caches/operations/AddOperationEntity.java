@@ -4,7 +4,7 @@ import org.voronov.boot.bot.caches.core.CachedEntity;
 import org.voronov.boot.bot.model.dto.TgUser;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
 
 public class AddOperationEntity extends CachedEntity {
@@ -14,10 +14,12 @@ public class AddOperationEntity extends CachedEntity {
     private double qty;
     private String comment;
     private Type type = Type.FOR_ONE;
+    private List<TgUser> users = new ArrayList<>();
 
-    public AddOperationEntity(Long from) {
+    public AddOperationEntity(Long from, Collection<TgUser> users) {
         super(from);
-        this.to = Collections.synchronizedList(new ArrayList<>());
+        this.to = new ArrayList<>();
+        this.users.addAll(users);
     }
 
     public void addTo(Long to) {
@@ -74,6 +76,14 @@ public class AddOperationEntity extends CachedEntity {
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    public List<TgUser> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<TgUser> users) {
+        this.users = users;
     }
 
     public enum Type {
