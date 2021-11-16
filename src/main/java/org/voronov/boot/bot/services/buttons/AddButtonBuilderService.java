@@ -8,12 +8,10 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.voronov.boot.bot.caches.operations.AddOperationEntity;
 import org.voronov.boot.bot.commands.AddOperationCommand;
 import org.voronov.boot.bot.model.dto.TgUser;
-import org.voronov.boot.bot.model.dto.UserChat;
 import org.voronov.boot.bot.model.repositories.ChatRepository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class AddButtonBuilderService {

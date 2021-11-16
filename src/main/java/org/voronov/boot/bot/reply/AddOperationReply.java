@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.voronov.boot.bot.Bot;
-import org.voronov.boot.bot.caches.operations.AddOperationCache;
+import org.voronov.boot.bot.caches.core.Cache;
 import org.voronov.boot.bot.caches.operations.AddOperationEntity;
 import org.voronov.boot.bot.services.ChatService;
 import org.voronov.boot.bot.services.MessageTextService;
@@ -20,7 +20,7 @@ public class AddOperationReply extends AbstractReplyHandler {
     private Bot bot;
 
     @Autowired
-    private AddOperationCache cache;
+    private Cache<AddOperationEntity> cache;
 
     @Autowired
     private ChatService chatService;

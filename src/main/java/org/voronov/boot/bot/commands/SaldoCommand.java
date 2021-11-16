@@ -7,7 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.bots.AbsSender;
-import org.voronov.boot.bot.caches.saldo.SaldoCache;
+import org.voronov.boot.bot.caches.core.Cache;
 import org.voronov.boot.bot.caches.saldo.SaldoEntity;
 import org.voronov.boot.bot.model.dto.Operation;
 import org.voronov.boot.bot.model.dto.TgChat;
@@ -30,7 +30,7 @@ public class SaldoCommand extends AbstractCommand {
     private ChatService chatService;
 
     @Autowired
-    private SaldoCache cache;
+    private Cache<SaldoEntity> cache;
 
     @Autowired
     private SaldoButtonBuilderService buttonBuilder;
