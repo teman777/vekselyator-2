@@ -55,7 +55,9 @@ public abstract class AbstractInlineHandler<T extends CachedEntity> {
     }
 
     private boolean checkUser(CallbackQuery query) {
-        return true;
+        String[] data = getData(query);
+        T entity = cache.getFromCache(data[data.length - 1]);
+        return entity.getUser().equals(query.getFrom().getId());
     }
 
     protected abstract InlineHandlerChanges handle(T entity, String id);
