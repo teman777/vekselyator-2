@@ -2,42 +2,24 @@ package org.voronov.boot.bot.inlines.saldo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
-import org.voronov.boot.bot.caches.saldo.SaldoCache;
+import org.voronov.boot.bot.caches.saldo.SaldoEntity;
 import org.voronov.boot.bot.services.buttons.SaldoButtonBuilderService;
 import org.voronov.boot.core.AbstractInlineHandler;
-
-import java.util.UUID;
+import org.voronov.boot.core.InlineHandlerChanges;
 
 @Component
-public class SaldoClose extends AbstractInlineHandler {
-
-    @Autowired
-    private SaldoCache cache;
+public class SaldoClose extends AbstractInlineHandler<SaldoEntity> {
 
     @Autowired
     private SaldoButtonBuilderService buttonBuilder;
 
     public SaldoClose() {
-        super("saldoClose");
+        super("saldoClose", 0);
     }
 
     @Override
-    protected BotApiMethod handle(CallbackQuery callbackQuery) {
-        String[] data = callbackQuery.getData().split("/");
-        if (data.length == 2) {
-            String id = data[1];
-            Long chatId = callbackQuery.getMessage().getChatId();
-            Integer messageId = callbackQuery.getMessage().getMessageId();
-            return inlineCancel(id, chatId, messageId);
-        }
-        return null;
-    }
-
-    private BotApiMethod inlineCancel(String id, Long chatId, Integer messageId) {
-        cache.removeFromCache(UUID.fromString(id));
-        return DeleteMessage.builder().messageId(messageId).chatId(String.valueOf(chatId)).build();
+    protected InlineHandlerChanges handle(SaldoEntity entity, String id) {
+        cache.removeFromCache(entity.getId());
+        return new InlineHandlerChanges(true);
     }
 }

@@ -201,6 +201,21 @@ public class ListOperationsEntity extends CachedEntity {
         } else {
             currentSelectedUser = 0L;
         }
+        rebuildSelectedUsers();
+    }
+
+    private void rebuildSelectedUsers() {
+        if (CollectionUtils.isNotEmpty(selectedUsers)) {
+            selectedUsers = selectedUsers.stream().filter(a -> {
+                Optional<TgUser> optionalTgUser = usersInChat.stream().filter(b -> b.getId().equals(a)).findFirst();
+                if (optionalTgUser.isPresent()) {
+                    TgUser us = optionalTgUser.get();
+                    List<Operation> ops = tgUserListMap.get(us);
+                    return CollectionUtils.isNotEmpty(ops);
+                }
+                return false;
+            }).collect(Collectors.toList());
+        }
     }
 
     public Type getType() {

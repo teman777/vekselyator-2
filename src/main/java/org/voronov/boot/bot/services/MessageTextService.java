@@ -6,7 +6,6 @@ import org.voronov.boot.bot.model.dto.Operation;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 @Service
 public class MessageTextService {

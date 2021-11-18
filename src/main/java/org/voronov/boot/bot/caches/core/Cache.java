@@ -1,10 +1,13 @@
 package org.voronov.boot.bot.caches.core;
 
 
+import org.springframework.stereotype.Component;
+
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class Cache<T extends CachedEntity> {
+@Component
+public class Cache<T extends CachedEntity> {
     private ConcurrentHashMap<UUID, T> cacheMap;
 
     public Cache() {

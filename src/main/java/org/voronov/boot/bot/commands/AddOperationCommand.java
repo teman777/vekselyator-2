@@ -8,7 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.voronov.boot.bot.Bot;
-import org.voronov.boot.bot.caches.operations.AddOperationCache;
+import org.voronov.boot.bot.caches.core.Cache;
 import org.voronov.boot.bot.caches.operations.AddOperationEntity;
 import org.voronov.boot.bot.model.dto.TgChat;
 import org.voronov.boot.bot.services.ChatService;
@@ -22,7 +22,7 @@ import java.util.Optional;
 public class AddOperationCommand extends AbstractCommand {
 
     @Autowired
-    private AddOperationCache cache;
+    private Cache<AddOperationEntity> cache;
 
     @Autowired
     private AddButtonBuilderService buttonBuilder;

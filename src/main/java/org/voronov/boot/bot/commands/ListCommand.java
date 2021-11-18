@@ -8,20 +8,18 @@ import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.bots.AbsSender;
-import org.voronov.boot.bot.caches.list.ListOperationsCache;
+import org.voronov.boot.bot.caches.core.Cache;
 import org.voronov.boot.bot.caches.list.ListOperationsEntity;
-import org.voronov.boot.bot.model.dto.TgUser;
-import org.voronov.boot.core.AbstractCommand;
 import org.voronov.boot.bot.model.dto.Operation;
 import org.voronov.boot.bot.model.dto.TgChat;
+import org.voronov.boot.bot.model.dto.TgUser;
 import org.voronov.boot.bot.services.ChatService;
 import org.voronov.boot.bot.services.MessageTextService;
 import org.voronov.boot.bot.services.buttons.ListButtonBuilderService;
+import org.voronov.boot.core.AbstractCommand;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Component
 public class ListCommand extends AbstractCommand {
@@ -30,7 +28,7 @@ public class ListCommand extends AbstractCommand {
     private ListButtonBuilderService buttonBuilder;
 
     @Autowired
-    private ListOperationsCache cache;
+    private Cache<ListOperationsEntity> cache;
 
     @Autowired
     private ChatService chatService;
