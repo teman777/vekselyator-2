@@ -12,7 +12,6 @@ import org.voronov.boot.bot.caches.saldo.SaldoEntity;
 import org.voronov.boot.bot.model.dto.Operation;
 import org.voronov.boot.bot.model.dto.TgChat;
 import org.voronov.boot.bot.model.dto.TgUser;
-import org.voronov.boot.bot.services.ChatService;
 import org.voronov.boot.bot.services.SaldoService;
 import org.voronov.boot.bot.services.buttons.SaldoButtonBuilderService;
 import org.voronov.boot.core.AbstractCommand;
@@ -27,9 +26,6 @@ public class SaldoCommand extends AbstractCommand {
     private SaldoService saldoService;
 
     @Autowired
-    private ChatService chatService;
-
-    @Autowired
     private Cache<SaldoEntity> cache;
 
     @Autowired
@@ -41,7 +37,7 @@ public class SaldoCommand extends AbstractCommand {
 
     @Override
     protected void __execute(AbsSender absSender, User user, Chat chat, String[] arguments) {
-        Optional<TgChat> findedChat = chatService.findChat(chat.getId());
+        Optional<TgChat> findedChat = chatCache.findChat(chat.getId());
         if (findedChat.isPresent()) {
             TgChat tgChat = findedChat.get();
             Set<Operation> operations = tgChat.getAllChatsOperations();

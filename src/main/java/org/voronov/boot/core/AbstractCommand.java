@@ -3,12 +3,11 @@ package org.voronov.boot.core;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Chat;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.voronov.boot.bot.services.ChatCache;
 import org.voronov.boot.bot.services.ChatService;
 import org.voronov.boot.bot.services.MessageTextService;
 
@@ -20,6 +19,9 @@ public abstract class AbstractCommand extends BotCommand {
     @Autowired
     private MessageTextService messageTextService;
 
+    @Autowired
+    protected ChatCache chatCache;
+
     public AbstractCommand(String commandIdentifier, String description) {
         super(commandIdentifier, description);
     }
@@ -30,6 +32,7 @@ public abstract class AbstractCommand extends BotCommand {
         chatService.registerUserForChat(chat.getId(), user.getId(), brief);
         try {
             __execute(absSender, user, chat, arguments);
+            chatCache.updateChat(chat.getId());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -44,12 +47,4 @@ public abstract class AbstractCommand extends BotCommand {
     }
 
     protected abstract void __execute(AbsSender absSender, User user, Chat chat, String[] arguments);
-
-    public void handleInline(CallbackQuery query, AbsSender bot) {
-
-    }
-
-    public void handleReply(Message message, AbsSender bot) {
-
-    }
 }
