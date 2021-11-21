@@ -3,6 +3,7 @@ package org.voronov.boot.bot.model.dto;
 
 import javax.persistence.*;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -58,6 +59,10 @@ public class TgChat {
         } else {
             return Collections.emptySet();
         }
+    }
+
+    public Optional<TgUser> getUserForId(Long id) {
+        return getAllUsersInChat().stream().filter(a -> a.getId().equals(id)).findFirst();
     }
 
     public void addUser(UserChat user) {
