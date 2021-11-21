@@ -19,6 +19,8 @@ public class SaldoEntity extends CachedEntity {
 
     private List<TgUser> users = new ArrayList<>();
 
+    private Double errorBalance = 0D;
+
     public SaldoEntity(Set<Operation> operations, Set<TgUser> usersInChat, Long user) {
         super(user);
         users.addAll(usersInChat);
@@ -72,5 +74,13 @@ public class SaldoEntity extends CachedEntity {
 
     public Map<Long, Operation> getOperationMap() {
         return operationMap;
+    }
+
+    public Double getErrorBalance() {
+        return errorBalance;
+    }
+
+    public void setErrorBalance(Double errorBalance) {
+        this.errorBalance = errorBalance;
     }
 }

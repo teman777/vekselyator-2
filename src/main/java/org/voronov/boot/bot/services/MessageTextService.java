@@ -2,6 +2,7 @@ package org.voronov.boot.bot.services;
 
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.User;
+import org.voronov.boot.bot.caches.saldo.SaldoEntity;
 import org.voronov.boot.bot.model.dto.Operation;
 
 import java.util.Collection;
@@ -18,6 +19,9 @@ public class MessageTextService {
     private static final String OPERATION_BUTTON_NEGATIVE_TEMPLATE = "-%.2f %s";
     private static final String WRONG_USER_ADD = "Не твое дело, проходи мимо.";
     private static final String LIST_WELCOME = "Выбери, что показать.";
+    private static final String SALDO_MSG_TEMPLATE_WITHOUT_BALANCE = "Взаимный расчет.";
+    private static final String SALDO_MSG_TEMPLATE_WITH_BALANCE = SALDO_MSG_TEMPLATE_WITHOUT_BALANCE
+            + "\nПри подсчете сальдо образовалась погрешность.\nShit happens";
 
     private static final String HELP_TEXT = "Это бот векселятор - сохраняет долги в этом чате.\n" +
             "/start - Зарегистрироваться в этом чате. Можно обновить свой ник\n" +
@@ -92,6 +96,15 @@ public class MessageTextService {
     }
 
     public String buildTextForSaldo(Operation operation) {
-        return String.format(SALDO_TEMPLATE, operation.getuTo().getUser().getBrief(), operation.getuFrom().getUser().getBrief() ,operation.getQty());
+        return String.format(SALDO_TEMPLATE, operation.getuTo().getUser().getBrief(), operation.getuFrom().getUser().getBrief(), operation.getQty());
+    }
+
+    public String buildTextForMessageSaldo(SaldoEntity entity) {
+        Double balance = entity.getErrorBalance();
+        if (balance == null || balance == 0) {
+            return SALDO_MSG_TEMPLATE_WITHOUT_BALANCE;
+        } else {
+            return SALDO_MSG_TEMPLATE_WITH_BALANCE;
+        }
     }
 }

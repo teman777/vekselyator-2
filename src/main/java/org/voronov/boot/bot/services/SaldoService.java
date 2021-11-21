@@ -5,6 +5,8 @@ import org.voronov.boot.bot.caches.saldo.SaldoEntity;
 import org.voronov.boot.bot.model.dto.Operation;
 import org.voronov.boot.bot.model.dto.UserChat;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -12,11 +14,12 @@ import java.util.stream.Collectors;
 public class SaldoService {
 
     public void optimize(SaldoEntity entity) {
-        Set<Operation> saldo = optimize(entity.getOperationMap().values());
+        Set<Operation> saldo = optimizeEntity(entity);
         entity.setSaldoAll(saldo);
     }
 
-    public Set<Operation> optimize(Collection<Operation> operationList) {
+    public Set<Operation> optimizeEntity(SaldoEntity entity) {
+        Collection<Operation> operationList = entity.getOperationMap().values();
         Map<UserChat, Double> userAndBalance = buildUserMap(operationList);
         Set<Operation> newOperations = new LinkedHashSet<>();
         long id = 1;
@@ -30,6 +33,10 @@ public class SaldoService {
             Double max = userAndBalance.get(maxUser);
             Double min = userAndBalance.get(minUser);
 
+            if (max == null || min == null) {
+                entity.setErrorBalance(max == null ? min : max);
+                break;
+            }
 
             Operation saldo = new Operation();
             saldo.setuFrom(maxUser);
@@ -117,6 +124,13 @@ public class SaldoService {
         for (UserChat uc : needToRemove) {
             userAndBalance.remove(uc);
         }
+
+        userAndBalance.entrySet().forEach(entry -> {
+            Double value = entry.getValue();
+            BigDecimal val = new BigDecimal(value).setScale(2, RoundingMode.HALF_UP);
+            Double newValue = val.doubleValue();
+            entry.setValue(newValue);
+        });
 
         return userAndBalance;
     }

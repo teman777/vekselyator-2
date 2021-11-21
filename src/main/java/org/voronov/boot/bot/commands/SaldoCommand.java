@@ -12,6 +12,7 @@ import org.voronov.boot.bot.caches.saldo.SaldoEntity;
 import org.voronov.boot.bot.model.dto.Operation;
 import org.voronov.boot.bot.model.dto.TgChat;
 import org.voronov.boot.bot.model.dto.TgUser;
+import org.voronov.boot.bot.services.MessageTextService;
 import org.voronov.boot.bot.services.SaldoService;
 import org.voronov.boot.bot.services.buttons.SaldoButtonBuilderService;
 import org.voronov.boot.core.AbstractCommand;
@@ -31,6 +32,9 @@ public class SaldoCommand extends AbstractCommand {
     @Autowired
     private SaldoButtonBuilderService buttonBuilder;
 
+    @Autowired
+    private MessageTextService textService;
+
     public SaldoCommand() {
         super("saldo", "Взаимовычет");
     }
@@ -48,10 +52,12 @@ public class SaldoCommand extends AbstractCommand {
 
             InlineKeyboardMarkup markup = buttonBuilder.buildButtons(entity, Stage.SHOW);
 
+            String msg = textService.buildTextForMessageSaldo(entity);
+
             SendMessage sm = SendMessage.builder()
                     .chatId(chat.getId().toString())
                     .replyMarkup(markup)
-                    .text("Взаимный расчет")
+                    .text(msg)
                     .build();
 
             send(sm, absSender);
