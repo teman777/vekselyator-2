@@ -11,6 +11,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.voronov.boot.bot.caches.core.Cache;
 import org.voronov.boot.bot.caches.core.CachedEntity;
+import org.voronov.boot.bot.services.ChatCache;
 
 public abstract class AbstractInlineHandler<T extends CachedEntity> {
 
@@ -20,6 +21,9 @@ public abstract class AbstractInlineHandler<T extends CachedEntity> {
 
     @Autowired
     private AbstractInlineCommandBot bot;
+
+    @Autowired
+    private ChatCache chatCache;
 
     @Autowired
     protected Cache<T> cache;
@@ -47,6 +51,7 @@ public abstract class AbstractInlineHandler<T extends CachedEntity> {
 
                 if (method != null) {
                     send(method, bot);
+                    chatCache.updateChat(callbackQuery.getMessage().getChatId());
                 }
             }
         } catch (Exception e) {
@@ -93,7 +98,7 @@ public abstract class AbstractInlineHandler<T extends CachedEntity> {
                     .text(newText)
                     .replyMarkup(markup)
                     .build();
-        } else if (changes.isDeleteMsg()){
+        } else if (changes.isDeleteMsg()) {
             return DeleteMessage.builder()
                     .chatId(chatId)
                     .messageId(messageId)

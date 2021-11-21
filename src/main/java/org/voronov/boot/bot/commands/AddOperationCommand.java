@@ -11,7 +11,6 @@ import org.voronov.boot.bot.Bot;
 import org.voronov.boot.bot.caches.core.Cache;
 import org.voronov.boot.bot.caches.operations.AddOperationEntity;
 import org.voronov.boot.bot.model.dto.TgChat;
-import org.voronov.boot.bot.services.ChatService;
 import org.voronov.boot.bot.services.MessageTextService;
 import org.voronov.boot.bot.services.buttons.AddButtonBuilderService;
 import org.voronov.boot.core.AbstractCommand;
@@ -28,9 +27,6 @@ public class AddOperationCommand extends AbstractCommand {
     private AddButtonBuilderService buttonBuilder;
 
     @Autowired
-    private ChatService chatService;
-
-    @Autowired
     private MessageTextService messageTextService;
 
     @Autowired
@@ -42,7 +38,7 @@ public class AddOperationCommand extends AbstractCommand {
 
     @Override
     protected void __execute(AbsSender absSender, User user, Chat chat, String[] arguments) {
-        Optional<TgChat> findedChat = chatService.findChat(chat.getId());
+        Optional<TgChat> findedChat = chatCache.findChat(chat.getId());
         if (findedChat.isPresent()) {
             TgChat tgChat = findedChat.get();
             AddOperationEntity entity = new AddOperationEntity(user.getId(), tgChat.getAllUsersInChat());

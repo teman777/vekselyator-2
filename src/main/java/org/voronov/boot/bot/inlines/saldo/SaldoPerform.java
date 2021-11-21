@@ -10,8 +10,6 @@ import org.voronov.boot.bot.services.buttons.SaldoButtonBuilderService;
 import org.voronov.boot.core.AbstractInlineHandler;
 import org.voronov.boot.core.InlineHandlerChanges;
 
-import java.util.UUID;
-
 @Component
 public class SaldoPerform extends AbstractInlineHandler<SaldoEntity> {
 

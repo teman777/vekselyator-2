@@ -7,6 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.voronov.boot.bot.Bot;
 import org.voronov.boot.bot.caches.core.Cache;
 import org.voronov.boot.bot.caches.operations.AddOperationEntity;
+import org.voronov.boot.bot.services.ChatCache;
 import org.voronov.boot.bot.services.ChatService;
 import org.voronov.boot.bot.services.MessageTextService;
 import org.voronov.boot.core.AbstractReplyHandler;
@@ -24,6 +25,9 @@ public class AddOperationReply extends AbstractReplyHandler {
 
     @Autowired
     private ChatService chatService;
+
+    @Autowired
+    private ChatCache chatCache;
 
     @Autowired
     private MessageTextService messageTextService;
@@ -48,7 +52,7 @@ public class AddOperationReply extends AbstractReplyHandler {
             entity.setComment(comment);
 
             chatService.createOperationFromEntity(entity);
-
+            chatCache.updateChat(message.getChatId());
             EditMessageText edit = EditMessageText.builder()
                     .chatId(message.getChat().getId().toString())
                     .text(messageTextService.getAddOperationText())
