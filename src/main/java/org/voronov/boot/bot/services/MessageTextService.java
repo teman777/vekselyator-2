@@ -2,17 +2,22 @@ package org.voronov.boot.bot.services;
 
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.User;
+import org.voronov.boot.bot.caches.operations.AddOperationEntity;
 import org.voronov.boot.bot.caches.saldo.SaldoEntity;
 import org.voronov.boot.bot.model.dto.Operation;
+import org.voronov.boot.bot.model.dto.TgUser;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MessageTextService {
 
     private static final String REGISTER_TEMPLATE = "Зарегал %s";
-    private static final String ADD_OPERATION_TEMPLATE = "Вексель добавлен.";
+    private static final String ADD_OPERATION_TEMPLATE_SOLO = "Вексель добавлен.\n%s одолжил %s %.2fр.\n%s";
+    private static final String ADD_OPERATION_TEMPLATE_SOLO_NOT_SOLO = "Вексель добавлен.\n%s одолжил %s по %.2fр.\n%s";
     private static final String OPERATION_TEMPLATE = "%s -> %s (%.2f) %s\n";
     private static final String SALDO_TEMPLATE = "%s -> %s (%.2f)";
     private static final String OPERATION_BUTTON_TEMPLATE = "%.2f %s";
@@ -35,8 +40,36 @@ public class MessageTextService {
         return String.format(REGISTER_TEMPLATE, username);
     }
 
-    public String getAddOperationText() {
-        return ADD_OPERATION_TEMPLATE;
+    public String getAddOperationText(AddOperationEntity entity) {
+        TgUser from = entity.getFromUser();
+        List<TgUser> to = entity.getToUsersWithoutSelf();
+
+        String fromBrief = from.getBrief();
+        List<String> toBriefs = to.stream().map(TgUser::getBrief).collect(Collectors.toList());
+
+        String toString = buildStringTo(toBriefs);
+
+        Double qty = entity.getQtyForOne();
+
+        String format = entity.getType() == AddOperationEntity.Type.FOR_ONE
+                || toBriefs.size() == 1
+                ? ADD_OPERATION_TEMPLATE_SOLO
+                : ADD_OPERATION_TEMPLATE_SOLO_NOT_SOLO;
+
+        return String.format(format, fromBrief, toString, qty, entity.getComment() != null ? entity.getComment() : "");
+    }
+
+    private String buildStringTo(List<String> briefs) {
+        StringBuilder sb = new StringBuilder();
+        for (Iterator<String> iterator = briefs.iterator(); iterator.hasNext(); ) {
+            String brief = iterator.next();
+            sb.append("@").append(brief);
+
+            if (iterator.hasNext()) {
+                sb.append(", ");
+            }
+        }
+        return sb.toString();
     }
 
     public String getHelpText() {
