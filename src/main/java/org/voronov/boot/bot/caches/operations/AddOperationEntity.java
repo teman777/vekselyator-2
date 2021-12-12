@@ -6,6 +6,8 @@ import org.voronov.boot.bot.model.dto.TgUser;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class AddOperationEntity extends CachedEntity {
     private List<Long> to;
@@ -80,6 +82,32 @@ public class AddOperationEntity extends CachedEntity {
 
     public List<TgUser> getUsers() {
         return users;
+    }
+
+    public TgUser getFromUser() {
+        Optional<TgUser> tgUser = users.stream()
+                .filter(a -> a.getId().equals(from))
+                .findFirst();
+
+        return tgUser.orElse(null);
+    }
+
+    public List<TgUser> getToUsers() {
+        return users.stream()
+                .filter(a -> to.contains(a.getId()))
+                .collect(Collectors.toList());
+    }
+
+    public List<TgUser> getToUsersWithoutSelf() {
+        return users.stream()
+                .filter(a -> to.contains(a.getId()) && !a.getId().equals(from))
+                .collect(Collectors.toList());
+    }
+
+    public Double getQtyForOne() {
+        return type == Type.DIVIDE_TO_ALL
+                ? qty / to.size()
+                : qty;
     }
 
     public void setUsers(List<TgUser> users) {

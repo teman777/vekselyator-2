@@ -55,9 +55,11 @@ public class AddOperationReply extends AbstractReplyHandler {
             chatCache.updateChat(message.getChatId());
             EditMessageText edit = EditMessageText.builder()
                     .chatId(message.getChat().getId().toString())
-                    .text(messageTextService.getAddOperationText())
+                    .text(messageTextService.getAddOperationText(entity))
                     .messageId(message.getReplyToMessage().getMessageId())
                     .build();
+
+            cache.removeFromCache(entity);
 
             send(edit, bot);
         }
