@@ -30,6 +30,9 @@ public class Operation implements Serializable {
     @Column(name = "Date")
     private Date date;
 
+    @Column(name = "IsDeleted")
+    private Boolean isDeleted = false;
+
     public Long getId() {
         return id;
     }
@@ -76,5 +79,13 @@ public class Operation implements Serializable {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
     }
 }
