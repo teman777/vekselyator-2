@@ -17,6 +17,7 @@ import org.voronov.boot.bot.model.repositories.UserChatRepository;
 import org.voronov.boot.bot.model.repositories.UserRepository;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -91,7 +92,7 @@ public class ChatService {
 
     @Transactional
     public void removeWithSaldo(SaldoEntity entity) {
-        operationRepository.removeById(entity.getOperationMap().keySet().stream().toList());
+        operationRepository.removeById(new ArrayList<>(entity.getOperationMap().keySet()));
         operationRepository.saveAll(entity.getUnselectedSaldo());
     }
 
