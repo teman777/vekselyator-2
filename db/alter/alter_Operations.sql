@@ -1,2 +1,1 @@
-alter table Operations
-add IsDeleted boolean
+alter table Operations add IsDeleted boolean default false

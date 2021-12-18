@@ -86,12 +86,12 @@ public class ChatService {
 
     @Transactional
     public void deleteOperations(List<Long> operations) {
-        operationRepository.deleteAllById(operations);
+        operationRepository.removeById(operations);
     }
 
     @Transactional
     public void removeWithSaldo(SaldoEntity entity) {
-        operationRepository.deleteAllById(entity.getOperationMap().keySet());
+        operationRepository.removeById(entity.getOperationMap().keySet().stream().toList());
         operationRepository.saveAll(entity.getUnselectedSaldo());
     }
 

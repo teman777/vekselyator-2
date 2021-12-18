@@ -1,6 +1,7 @@
 package org.voronov.boot.bot.model.dto;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -25,10 +26,12 @@ public class UserChat implements Serializable {
 
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "UTo", referencedColumnName = "ID")
+    @Where(clause = "IsDeleted = 0")
     private Set<Operation> takedOperations;
 
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "UFrom", referencedColumnName = "ID")
+    @Where(clause = "IsDeleted = 0")
     private Set<Operation> givedOperations;
 
     public TgChat getChat() {
