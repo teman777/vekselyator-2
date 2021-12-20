@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 import org.voronov.boot.bot.model.dto.TgChat;
 import org.voronov.boot.bot.model.repositories.ChatRepository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,5 +42,9 @@ public class ChatCache {
     public void updateChat(Long id) {
         Optional<TgChat> chat = chatRepository.findById(id);
         chat.ifPresent(a -> cache.put(a.getId(), a));
+    }
+
+    public List<TgChat> getAllChats() {
+        return new ArrayList<>(cache.values());
     }
 }
