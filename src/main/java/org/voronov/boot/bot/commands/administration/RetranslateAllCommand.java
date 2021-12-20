@@ -1,4 +1,4 @@
-package org.voronov.boot.bot.commands;
+package org.voronov.boot.bot.commands.administration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,7 +11,7 @@ import org.voronov.boot.bot.Bot;
 import org.voronov.boot.core.AbstractCommand;
 
 @Component
-public class RetranslationCommand extends AbstractCommand {
+public class RetranslateAllCommand extends AbstractCommand {
 
     @Autowired
     private Bot bot;
@@ -19,16 +19,16 @@ public class RetranslationCommand extends AbstractCommand {
     @Value("${telegram.bot.mainuser}")
     private Long mainUser;
 
-    public RetranslationCommand() {
-        super("retranslation", "Отправка сообщений от имени бота");
+    public RetranslateAllCommand() {
+        super("retranslateall", "Отправка сообщений всем пользователям");
     }
 
     @Override
     protected void __execute(AbsSender absSender, User user, Chat chat, String[] arguments) {
         if (user.getId().equals(mainUser) && chat.isUserChat()) {
-            bot.setTranslateOn(Boolean.TRUE);
+            bot.setTranslateAllOn(Boolean.TRUE);
             SendMessage sm = SendMessage.builder()
-                    .text("Ретрансляция включена.\n/retranslation_off")
+                    .text("Ретрансляция всем пользователям включена.\n/retranslationall_off")
                     .chatId(chat.getId().toString())
                     .build();
             send(sm, absSender);

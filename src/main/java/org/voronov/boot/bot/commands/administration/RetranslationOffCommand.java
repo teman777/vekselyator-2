@@ -1,4 +1,4 @@
-package org.voronov.boot.bot.commands;
+package org.voronov.boot.bot.commands.administration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,7 +11,7 @@ import org.voronov.boot.bot.Bot;
 import org.voronov.boot.core.AbstractCommand;
 
 @Component
-public class RetranslateAllOffCommand extends AbstractCommand {
+public class RetranslationOffCommand extends AbstractCommand {
 
     @Autowired
     private Bot bot;
@@ -19,20 +19,20 @@ public class RetranslateAllOffCommand extends AbstractCommand {
     @Value("${telegram.bot.mainuser}")
     private Long mainUser;
 
-    public RetranslateAllOffCommand() {
-        super("retranslationall_off", "Ретрансляция всем чатам выключена");
+    public RetranslationOffCommand() {
+        super("retranslation_off", "Выключить ретрансляцию");
     }
 
     @Override
     protected void __execute(AbsSender absSender, User user, Chat chat, String[] arguments) {
         if (user.getId().equals(mainUser) && chat.isUserChat()) {
-            bot.setTranslateAllOn(Boolean.FALSE);
-            SendMessage sm = SendMessage.builder()
-                    .text("Ретрансляция всем пользователям выключена.\n/retranslateall")
-                    .chatId(chat.getId().toString())
-                    .build();
-            send(sm, absSender);
-        }
+        bot.setTranslateOn(Boolean.FALSE);
+        SendMessage sm = SendMessage.builder()
+                .text("Ретрансляция выключена.\n/retranslation")
+                .chatId(chat.getId().toString())
+                .build();
+        send(sm, absSender);
+    }
 
     }
 }
