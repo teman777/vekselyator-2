@@ -28,7 +28,7 @@ public class RetranslateAllOffCommand extends AbstractCommand {
         if (user.getId().equals(mainUser) && chat.isUserChat()) {
             bot.setTranslateAllOn(Boolean.FALSE);
             SendMessage sm = SendMessage.builder()
-                    .text("Ретрансляция всем пользователям выключена.\n/retranslationall")
+                    .text("Ретрансляция всем пользователям выключена.\n/retranslateall")
                     .chatId(chat.getId().toString())
                     .build();
             send(sm, absSender);
