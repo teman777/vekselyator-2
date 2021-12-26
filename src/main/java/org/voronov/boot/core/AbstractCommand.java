@@ -33,7 +33,7 @@ public abstract class AbstractCommand extends BotCommand {
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] arguments) {
         String brief = messageTextService.buildBriefForUser(user);
-        chatService.registerUserForChat(chat.getId(), user.getId(), brief);
+        chatService.registerUserForChat(chat.getId(), user.getId(), brief, chat.getTitle());
         try {
             __execute(absSender, user, chat, arguments);
             chatCache.updateChat(chat.getId());

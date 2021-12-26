@@ -68,10 +68,6 @@ public class TgChat {
         return getAllUsersInChat().stream().filter(a -> a.getId().equals(id)).findFirst();
     }
 
-    public void addUser(UserChat user) {
-
-    }
-
     public String getName() {
         return name;
     }

@@ -26,9 +26,7 @@ public class TranslationService {
 
     public List<SendMessage> translateToAll(Update update, Long admin) {
         String text = update.getMessage().getText();
-        List<TgChat> chats = chatCache.getAllChats().stream()
-                .filter(a -> !a.getId().equals(admin))
-                .collect(Collectors.toList());
+        List<TgChat> chats = chatCache.getGroupChats();
         return chats.stream().map(a -> {
             SendMessage sm = SendMessage.builder()
                     .text(text)
