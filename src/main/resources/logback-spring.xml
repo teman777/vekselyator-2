@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
     <springProfile name="default">
         <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
@@ -13,13 +13,13 @@
     <springProfile name="prod">
 
         <appender name="FILE-ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
-            <file>app.log</file>
+            <file>logs/app.log</file>
 
             <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
                 <fileNamePattern>logs/archived/app.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
                 <!-- each archived file, size max 10MB -->
                 <maxFileSize>10MB</maxFileSize>
-                <!-- total size of all archive files, if total size > 20GB, it will delete old archived file -->
+                <!-- total size of all archive files, if total size > 10GB, it will delete old archived file -->
                 <totalSizeCap>10GB</totalSizeCap>
                 <!-- 60 days to keep -->
                 <maxHistory>60</maxHistory>
@@ -30,7 +30,7 @@
             </encoder>
         </appender>
 
-        <logger name="org.springframework" level="INFO"/>
+        <logger name="org.springframework" level="ERROR"/>
         <logger name="org.voronov" level="DEBUG"/>
         <root level="ERROR">
             <appender-ref ref="FILE-ROLLING"/>

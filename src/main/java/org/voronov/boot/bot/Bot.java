@@ -1,5 +1,6 @@
 package org.voronov.boot.bot;
 
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -33,6 +34,9 @@ public class Bot extends AbstractInlineCommandBot {
     @Autowired
     private TranslationService translationService;
 
+    @Autowired
+    private Logger logger;
+
     @Override
     public void processNonCommandAndInlineUpdate(Update update) {
         if (update.getMessage().getChat().isUserChat()) {
@@ -54,19 +58,19 @@ public class Bot extends AbstractInlineCommandBot {
             try {
                 execute(sm);
             } catch (TelegramApiException e) {
-                e.printStackTrace();
+                logger.error("Error on translating", e);
             }
         }
     }
 
     private void handleTranslateAll(Update update) {
-        List<SendMessage> messages = translationService.translateToAll(update);
+        List<SendMessage> messages = translationService.translateToAll(update, mainUser);
         for (SendMessage sm : messages) {
             if (sm != null) {
                 try {
                     execute(sm);
                 } catch (TelegramApiException e) {
-                    e.printStackTrace();
+                    logger.error("Error on translating to all", e);
                 }
             }
         }
@@ -105,5 +109,9 @@ public class Bot extends AbstractInlineCommandBot {
 
     public void setTranslateAllOn(Boolean translateAllOn) {
         isTranslateAllOn = translateAllOn;
+    }
+
+    public Long getMainUser() {
+        return mainUser;
     }
 }

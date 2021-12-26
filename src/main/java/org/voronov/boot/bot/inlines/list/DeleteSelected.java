@@ -20,7 +20,7 @@ public class DeleteSelected extends AbstractInlineHandler<ListOperationsEntity> 
     private ChatService chatService;
 
     public DeleteSelected() {
-        super("listDelSl", 0);
+        super("listDelSl");
     }
 
     @Override

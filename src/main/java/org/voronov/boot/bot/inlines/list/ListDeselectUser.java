@@ -16,7 +16,7 @@ public class ListDeselectUser extends AbstractInlineHandler<ListOperationsEntity
     private ListButtonBuilderService buttonBuilder;
 
     public ListDeselectUser() {
-        super("listDeselectUser", 1);
+        super("listDeselectUser");
     }
 
     @Override

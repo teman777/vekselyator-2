@@ -16,7 +16,7 @@ public class My extends AbstractInlineHandler<ListOperationsEntity> {
     private ListButtonBuilderService buttonBuilder;
 
     public My() {
-        super("my", 0);
+        super("my");
     }
 
     @Override

@@ -16,7 +16,7 @@ public class SetTypeInline extends AbstractInlineHandler<AddOperationEntity> {
     private AddButtonBuilderService buttonBuilder;
 
     public SetTypeInline() {
-        super("settype", 1);
+        super("settype");
     }
 
     @Override

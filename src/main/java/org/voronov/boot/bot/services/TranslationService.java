@@ -15,6 +15,7 @@ public class TranslationService {
     @Autowired
     private ChatCache chatCache;
 
+
     public SendMessage translate(Update update, Long mainChat) {
         SendMessage sm = SendMessage.builder()
                 .chatId(mainChat.toString())
@@ -23,9 +24,11 @@ public class TranslationService {
         return sm;
     }
 
-    public List<SendMessage> translateToAll(Update update) {
+    public List<SendMessage> translateToAll(Update update, Long admin) {
         String text = update.getMessage().getText();
-        List<TgChat> chats = chatCache.getAllChats();
+        List<TgChat> chats = chatCache.getAllChats().stream()
+                .filter(a -> !a.getId().equals(admin))
+                .collect(Collectors.toList());
         return chats.stream().map(a -> {
             SendMessage sm = SendMessage.builder()
                     .text(text)

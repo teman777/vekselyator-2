@@ -16,7 +16,7 @@ public class SelectOperation extends AbstractInlineHandler<ListOperationsEntity>
     private ListButtonBuilderService buttonBuilder;
 
     public SelectOperation() {
-        super("selOp", 1);
+        super("selOp");
     }
 
     @Override

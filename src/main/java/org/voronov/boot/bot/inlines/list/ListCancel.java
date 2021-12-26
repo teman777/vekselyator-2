@@ -9,7 +9,7 @@ import org.voronov.boot.core.InlineHandlerChanges;
 public class ListCancel extends AbstractInlineHandler<ListOperationsEntity> {
 
     public ListCancel() {
-        super("cancelList", 0);
+        super("cancelList");
     }
 
     @Override

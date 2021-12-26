@@ -16,7 +16,7 @@ public class NextInline extends AbstractInlineHandler<AddOperationEntity> {
     private AddButtonBuilderService buttonBuilder;
 
     public NextInline() {
-        super("next", 0);
+        super("next");
     }
 
     @Override

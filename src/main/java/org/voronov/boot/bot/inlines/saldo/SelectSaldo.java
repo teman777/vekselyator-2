@@ -17,7 +17,7 @@ public class SelectSaldo extends AbstractInlineHandler<SaldoEntity> {
 
 
     public SelectSaldo() {
-        super("saldoSel", 1);
+        super("saldoSel");
     }
 
     @Override

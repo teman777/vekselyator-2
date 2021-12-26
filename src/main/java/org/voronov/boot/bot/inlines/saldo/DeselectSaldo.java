@@ -16,7 +16,7 @@ public class DeselectSaldo extends AbstractInlineHandler<SaldoEntity> {
     private SaldoButtonBuilderService buttonBuilder;
 
     public DeselectSaldo() {
-        super("saldoDesel", 1);
+        super("saldoDesel");
     }
 
     @Override

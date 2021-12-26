@@ -17,7 +17,7 @@ public class SaldoNext extends AbstractInlineHandler<SaldoEntity> {
 
 
     public SaldoNext() {
-        super("saldoNext", 0);
+        super("saldoNext");
     }
 
     @Override

@@ -5,4 +5,5 @@ import org.springframework.stereotype.Repository;
 import org.voronov.boot.bot.model.dto.TgChat;
 
 @Repository
-public interface ChatRepository extends CrudRepository<TgChat, Long> {}
+public interface ChatRepository extends CrudRepository<TgChat, Long> {
+}

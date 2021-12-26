@@ -20,7 +20,7 @@ public class All extends AbstractInlineHandler<ListOperationsEntity> {
     private MessageTextService textService;
 
     public All() {
-        super("all", 0);
+        super("all");
     }
 
     @Override

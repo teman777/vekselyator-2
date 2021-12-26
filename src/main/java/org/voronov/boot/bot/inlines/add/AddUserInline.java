@@ -16,7 +16,7 @@ public class AddUserInline extends AbstractInlineHandler<AddOperationEntity> {
     private AddButtonBuilderService buttonService;
 
     public AddUserInline() {
-        super("adduser", 1);
+        super("adduser");
     }
 
     @Override

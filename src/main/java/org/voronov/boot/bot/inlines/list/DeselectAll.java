@@ -16,7 +16,7 @@ public class DeselectAll extends AbstractInlineHandler<ListOperationsEntity> {
     private ListButtonBuilderService buttonBuilder;
 
     public DeselectAll() {
-        super("delAll", 1);
+        super("delAll");
     }
 
     @Override

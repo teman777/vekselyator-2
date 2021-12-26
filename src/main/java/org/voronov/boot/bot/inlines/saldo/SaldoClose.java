@@ -14,7 +14,7 @@ public class SaldoClose extends AbstractInlineHandler<SaldoEntity> {
     private SaldoButtonBuilderService buttonBuilder;
 
     public SaldoClose() {
-        super("saldoClose", 0);
+        super("saldoClose");
     }
 
     @Override
