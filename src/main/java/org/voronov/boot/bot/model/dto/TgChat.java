@@ -14,6 +14,9 @@ public class TgChat {
     @Column(name = "ID")
     private Long id;
 
+    @Column(name = "Name")
+    private String name;
+
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "ChatID")
     private Set<UserChat> users;
@@ -67,5 +70,13 @@ public class TgChat {
 
     public void addUser(UserChat user) {
 
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
