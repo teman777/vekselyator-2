@@ -44,7 +44,7 @@ public class MessageTextService {
         TgUser from = entity.getFromUser();
         List<TgUser> to = entity.getToUsersWithoutSelf();
 
-        String fromBrief = from.getBrief();
+        String fromBrief = "@" + from.getBrief();
         List<String> toBriefs = to.stream().map(TgUser::getBrief).collect(Collectors.toList());
 
         String toString = buildStringTo(toBriefs);
