@@ -30,8 +30,8 @@
             </encoder>
         </appender>
 
-        <logger name="org.springframework" level="ERROR"/>
-        <logger name="org.voronov" level="DEBUG"/>
+        <logger name="org.springframework" level="INFO"/>
+        <logger name="org.voronov" level="INFO"/>
         <root level="ERROR">
             <appender-ref ref="FILE-ROLLING"/>
         </root>

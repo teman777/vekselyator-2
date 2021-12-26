@@ -15,7 +15,7 @@ services:
     depends_on:
       - bot-db-server
     volumes:
-      - ./logs:/app/logs
+      - ./prod_logs:/logs
 
 
 
