@@ -1,5 +1,6 @@
 FROM adoptopenjdk:16
 
+ENV TZ="Europe/Samara"
 RUN mkdir /app
 COPY ./build /app
 
