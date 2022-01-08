@@ -175,6 +175,10 @@ public class ListOperationsEntity extends CachedEntity {
         selectedUsers.remove(userId);
     }
 
+    public boolean isSelectedUsersEmpty() {
+        return CollectionUtils.isEmpty(selectedUsers);
+    }
+
     public boolean isNothingToShowMy() {
         return tgUserListMap.isEmpty();
     }
