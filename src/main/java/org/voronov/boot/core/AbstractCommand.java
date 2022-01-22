@@ -1,5 +1,6 @@
 package org.voronov.boot.core;
 
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -22,6 +23,9 @@ public abstract class AbstractCommand extends BotCommand {
     @Autowired
     protected ChatCache chatCache;
 
+    @Autowired
+    protected Logger logger;
+
     public AbstractCommand(String commandIdentifier, String description) {
         super(commandIdentifier, description);
     }
@@ -29,12 +33,12 @@ public abstract class AbstractCommand extends BotCommand {
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] arguments) {
         String brief = messageTextService.buildBriefForUser(user);
-        chatService.registerUserForChat(chat.getId(), user.getId(), brief);
+        chatService.registerUserForChat(chat.getId(), user.getId(), brief, chat.getTitle());
         try {
             __execute(absSender, user, chat, arguments);
             chatCache.updateChat(chat.getId());
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(String.format("Error on executing command %s", super.getCommandIdentifier()), e);
         }
     }
 
@@ -42,7 +46,7 @@ public abstract class AbstractCommand extends BotCommand {
         try {
             bot.execute(method);
         } catch (TelegramApiException e) {
-            e.printStackTrace();
+            logger.error(String.format("Error on send msg from command %s", super.getCommandIdentifier()), e);
         }
     }
 

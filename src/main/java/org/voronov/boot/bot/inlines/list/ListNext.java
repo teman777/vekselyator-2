@@ -19,7 +19,7 @@ public class ListNext extends AbstractInlineHandler<ListOperationsEntity> {
     private MessageTextService textService;
 
     public ListNext() {
-        super("listNext", 0);
+        super("listNext");
     }
 
     @Override

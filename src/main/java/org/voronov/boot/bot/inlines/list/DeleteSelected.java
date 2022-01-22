@@ -20,7 +20,7 @@ public class DeleteSelected extends AbstractInlineHandler<ListOperationsEntity> 
     private ChatService chatService;
 
     public DeleteSelected() {
-        super("listDelSl", 0);
+        super("listDelSl");
     }
 
     @Override
@@ -28,11 +28,13 @@ public class DeleteSelected extends AbstractInlineHandler<ListOperationsEntity> 
         chatService.deleteOperations(entity.getSelectedOperations());
         entity.deleteSelectedOperations();
 
-        InlineKeyboardMarkup markup = buttonBuilder.buildButtons(entity, ListCommand.Stage.LIST_SHOW_MY);
-        InlineHandlerChanges changes = new InlineHandlerChanges(markup);
+        InlineHandlerChanges changes;
 
-        if (entity.isNothingToShowAll()) {
-            changes.setNewMsgText("Нет векселей для выбранных пользователей");
+        InlineKeyboardMarkup markup = buttonBuilder.buildButtons(entity, ListCommand.Stage.LIST_SHOW_MY);
+        changes = new InlineHandlerChanges(markup);
+
+        if (entity.isSelectedUsersEmpty()) {
+            changes.setNewMsgText("Удалено");
         }
 
         return changes;

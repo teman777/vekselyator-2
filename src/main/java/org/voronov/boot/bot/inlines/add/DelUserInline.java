@@ -16,7 +16,7 @@ public class DelUserInline extends AbstractInlineHandler<AddOperationEntity> {
     private AddButtonBuilderService buttonBuilder;
 
     public DelUserInline() {
-        super("deluser", 1);
+        super("deluser");
     }
 
     @Override

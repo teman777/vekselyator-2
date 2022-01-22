@@ -16,7 +16,7 @@ public class SelectAll extends AbstractInlineHandler<ListOperationsEntity> {
     private ListButtonBuilderService buttonBuilder;
 
     public SelectAll() {
-        super("selAll", 1);
+        super("selAll");
     }
 
     @Override

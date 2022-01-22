@@ -18,7 +18,7 @@ public abstract class AbstractInlineCommandBot extends TelegramLongPollingComman
         inlineHandlerMap.put(inlineHandler.getInlineCommand(), inlineHandler);
     }
 
-    public void registerReply(AbstractReplyHandler replyHandler){
+    public void registerReply(AbstractReplyHandler replyHandler) {
         replyHandlerMap.put(replyHandler.getRegex(), replyHandler);
     }
 

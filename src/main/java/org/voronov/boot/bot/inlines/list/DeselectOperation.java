@@ -11,7 +11,7 @@ import org.voronov.boot.core.AbstractInlineHandler;
 import org.voronov.boot.core.InlineHandlerChanges;
 
 @Component
-public class DeselectOperation extends AbstractInlineHandler<ListOperationsEntity>{
+public class DeselectOperation extends AbstractInlineHandler<ListOperationsEntity> {
 
     @Autowired
     private Cache<ListOperationsEntity> cache;
@@ -20,7 +20,7 @@ public class DeselectOperation extends AbstractInlineHandler<ListOperationsEntit
     private ListButtonBuilderService buttonBuilder;
 
     public DeselectOperation() {
-        super("dslOp", 1);
+        super("dslOp");
     }
 
     @Override

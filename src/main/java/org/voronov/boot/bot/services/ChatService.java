@@ -1,6 +1,7 @@
 package org.voronov.boot.bot.services;
 
 
+import com.google.common.base.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.voronov.boot.bot.model.repositories.UserChatRepository;
 import org.voronov.boot.bot.model.repositories.UserRepository;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +31,11 @@ public class ChatService {
     private UserChatRepository userChatRepository;
     private OperationRepository operationRepository;
 
-    private Logger logger = LoggerFactory.getLogger(ChatService.class);
+    @Autowired
+    private Logger logger;
+
+    @Autowired
+    private ChatCache chatCache;
 
     @Autowired
     public ChatService(UserRepository userRepository, ChatRepository chatRepository, UserChatRepository userChatRepository, OperationRepository operationRepository) {
@@ -48,7 +54,7 @@ public class ChatService {
     }
 
     @Transactional
-    public void registerUserForChat(Long chatID, Long userID, String userBrief) {
+    public void registerUserForChat(Long chatID, Long userID, String userBrief, String chatTitle) {
         Optional<TgChat> chat = findChat(chatID);
         Optional<TgUser> user = findUser(userID);
         TgChat tgChat;
@@ -69,9 +75,14 @@ public class ChatService {
 
         if (chat.isPresent()) {
             tgChat = chat.get();
+            if (!Objects.equal(tgChat.getName(), chatTitle)) {
+                tgChat.setName(chatTitle);
+                chatRepository.save(tgChat);
+            }
         } else {
             tgChat = new TgChat();
             tgChat.setId(chatID);
+            tgChat.setName(chatTitle);
             chatRepository.save(tgChat);
         }
 
@@ -79,19 +90,20 @@ public class ChatService {
             UserChat uc = new UserChat();
             uc.setChat(tgChat);
             uc.setUser(tgUser);
-            tgChat.addUser(uc);
             userChatRepository.save(uc);
         }
+
+        chatCache.updateChat(chatID);
     }
 
     @Transactional
     public void deleteOperations(List<Long> operations) {
-        operationRepository.deleteAllById(operations);
+        operationRepository.removeById(operations);
     }
 
     @Transactional
     public void removeWithSaldo(SaldoEntity entity) {
-        operationRepository.deleteAllById(entity.getOperationMap().keySet());
+        operationRepository.removeById(new ArrayList<>(entity.getOperationMap().keySet()));
         operationRepository.saveAll(entity.getUnselectedSaldo());
     }
 

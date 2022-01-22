@@ -72,7 +72,7 @@ public class ListOperationsEntity extends CachedEntity {
         if (optUser.isPresent()) {
             TgUser tgUser = optUser.get();
             List<Operation> operations = tgUserListMap.get(tgUser);
-            for (Operation op: operations) {
+            for (Operation op : operations) {
                 if (op.getuTo().getUser().getId().equals(tgUser.getId())) {
                     result += Math.abs(op.getQty());
                 } else {
@@ -173,6 +173,10 @@ public class ListOperationsEntity extends CachedEntity {
             currentSelectedUser = 0L;
         }
         selectedUsers.remove(userId);
+    }
+
+    public boolean isSelectedUsersEmpty() {
+        return CollectionUtils.isEmpty(selectedUsers);
     }
 
     public boolean isNothingToShowMy() {

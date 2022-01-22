@@ -1,5 +1,6 @@
 package org.voronov.boot.core;
 
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
@@ -9,6 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.voronov.boot.bot.Bot;
 import org.voronov.boot.bot.caches.core.Cache;
 import org.voronov.boot.bot.caches.core.CachedEntity;
 import org.voronov.boot.bot.services.ChatCache;
@@ -17,10 +19,10 @@ public abstract class AbstractInlineHandler<T extends CachedEntity> {
 
     private String inlineCommand;
 
-    private int numberOfIds;
+    private Boolean noNeedEntity = Boolean.FALSE;
 
     @Autowired
-    private AbstractInlineCommandBot bot;
+    private Bot bot;
 
     @Autowired
     private ChatCache chatCache;
@@ -28,9 +30,16 @@ public abstract class AbstractInlineHandler<T extends CachedEntity> {
     @Autowired
     protected Cache<T> cache;
 
-    public AbstractInlineHandler(String inlineCommand, int numberOfIds) {
+    @Autowired
+    private Logger logger;
+
+    public AbstractInlineHandler(String inlineCommand) {
         this.inlineCommand = inlineCommand;
-        this.numberOfIds = numberOfIds;
+    }
+
+    public AbstractInlineHandler(String inlineCommand, Boolean noNeedEntity) {
+        this.inlineCommand = inlineCommand;
+        this.noNeedEntity = noNeedEntity;
     }
 
     public String getInlineCommand() {
@@ -44,7 +53,10 @@ public abstract class AbstractInlineHandler<T extends CachedEntity> {
                 String entityId = data[data.length - 1];
                 String anotherId = data[0];
 
-                T entity = cache.getFromCache(entityId);
+                T entity = null;
+                if (!noNeedEntity) {
+                    entity = cache.getFromCache(entityId);
+                }
 
                 InlineHandlerChanges changes = handle(entity, anotherId);
                 BotApiMethod method = buildBotApi(changes, callbackQuery);
@@ -55,14 +67,20 @@ public abstract class AbstractInlineHandler<T extends CachedEntity> {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(String.format("Exception on handling inline %s", inlineCommand), e);
         }
     }
 
     private boolean checkUser(CallbackQuery query) {
-        String[] data = getData(query);
-        T entity = cache.getFromCache(data[data.length - 1]);
-        return entity.getUser().equals(query.getFrom().getId());
+        if (!noNeedEntity) {
+            String[] data = getData(query);
+            T entity = cache.getFromCache(data[data.length - 1]);
+            return entity.getUser().equals(query.getFrom().getId());
+        } else {
+            // checking admin user
+            Long admin = bot.getMainUser();
+            return query.getFrom().getId().equals(admin) && query.getMessage().getChat().isUserChat();
+        }
     }
 
     protected abstract InlineHandlerChanges handle(T entity, String id);
@@ -71,7 +89,7 @@ public abstract class AbstractInlineHandler<T extends CachedEntity> {
         try {
             bot.execute(method);
         } catch (TelegramApiException e) {
-            e.printStackTrace();
+            logger.error(String.format("Error on sending changes from %s", inlineCommand), e);
         }
     }
 

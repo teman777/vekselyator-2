@@ -1,11 +1,16 @@
 package org.voronov.boot.bot;
 
+import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.voronov.boot.bot.services.TranslationService;
 import org.voronov.boot.core.AbstractInlineCommandBot;
+
+import java.util.List;
 
 @Component
 public class Bot extends AbstractInlineCommandBot {
@@ -24,6 +29,14 @@ public class Bot extends AbstractInlineCommandBot {
 
     private Boolean isTranslateOn = Boolean.FALSE;
 
+    private Boolean isTranslateAllOn = Boolean.FALSE;
+
+    @Autowired
+    private TranslationService translationService;
+
+    @Autowired
+    private Logger logger;
+
     @Override
     public void processNonCommandAndInlineUpdate(Update update) {
         if (update.getMessage().getChat().isUserChat()) {
@@ -32,17 +45,44 @@ public class Bot extends AbstractInlineCommandBot {
     }
 
     private void handleRetranslation(Update update) {
-        if (isTranslateOn && update.getMessage().getFrom().getId().equals(mainUser)) {
-            SendMessage sm = SendMessage.builder()
-                    .chatId(mainChat.toString())
-                    .text(update.getMessage().getText())
-                    .build();
+        if (isTranslateAllowed(update)) {
+            handleTranslate(update);
+        } else if (isTranslateAllAllowed(update)) {
+            handleTranslateAll(update);
+        }
+    }
+
+    private void handleTranslate(Update update) {
+        SendMessage sm = translationService.translate(update, mainChat);
+        if (sm != null) {
             try {
                 execute(sm);
             } catch (TelegramApiException e) {
-                e.printStackTrace();
+                logger.error("Error on translating", e);
             }
         }
+    }
+
+    private void handleTranslateAll(Update update) {
+        List<SendMessage> messages = translationService.translateToAll(update, mainUser);
+        for (SendMessage sm : messages) {
+            if (sm != null) {
+                try {
+                    execute(sm);
+                } catch (TelegramApiException e) {
+                    logger.error("Error on translating to all", e);
+                }
+            }
+        }
+
+    }
+
+    private boolean isTranslateAllowed(Update update) {
+        return isTranslateOn && update.getMessage().getFrom().getId().equals(mainUser);
+    }
+
+    private boolean isTranslateAllAllowed(Update update) {
+        return isTranslateAllOn && update.getMessage().getFrom().getId().equals(mainUser);
     }
 
     @Override
@@ -61,5 +101,17 @@ public class Bot extends AbstractInlineCommandBot {
 
     public void setTranslateOn(Boolean translateOn) {
         isTranslateOn = translateOn;
+    }
+
+    public Boolean getTranslateAllOn() {
+        return isTranslateAllOn;
+    }
+
+    public void setTranslateAllOn(Boolean translateAllOn) {
+        isTranslateAllOn = translateAllOn;
+    }
+
+    public Long getMainUser() {
+        return mainUser;
     }
 }

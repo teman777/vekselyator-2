@@ -20,7 +20,7 @@ public class SaldoPerform extends AbstractInlineHandler<SaldoEntity> {
     private ChatService chatService;
 
     public SaldoPerform() {
-        super("saldoPerform", 0);
+        super("saldoPerform");
     }
 
     @Override

@@ -11,7 +11,7 @@ import java.util.UUID;
 public class CancelInline extends AbstractInlineHandler<AddOperationEntity> {
 
     public CancelInline() {
-        super("cancel", 0);
+        super("cancel");
     }
 
     @Override

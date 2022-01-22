@@ -1,5 +1,8 @@
 package org.voronov.boot.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InjectionPoint;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,5 +30,11 @@ public class BeanConfig {
     @Bean
     public ReplyInitializer replyInitializer(AbstractInlineCommandBot bot, ObjectProvider<List<AbstractReplyHandler>> replyList) {
         return new ReplyInitializer(bot, replyList.getIfAvailable(Collections::emptyList));
+    }
+
+    @Bean
+    public Logger produceLogger(InjectionPoint injectionPoint) {
+        Class<?> clazz = injectionPoint.getMember().getDeclaringClass();
+        return LoggerFactory.getLogger(clazz);
     }
 }

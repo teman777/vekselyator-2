@@ -1,5 +1,6 @@
 package org.voronov.boot.bot.services.buttons;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -62,7 +63,10 @@ public class ListButtonBuilderService {
 
     private InlineKeyboardMarkup buildForShowMy(ListOperationsEntity entity) {
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
-        List<List<InlineKeyboardButton>> buttons = buildButtonsForShowMy(entity);
+        List<List<InlineKeyboardButton>> buttons = entity.isSelectedUsersEmpty()
+                ? new ArrayList<>()
+                : buildButtonsForShowMy(entity);
+
         List<InlineKeyboardButton> bottomButtons = buildBottomForShowMy(entity);
         buttons.add(bottomButtons);
         markup.setKeyboard(buttons);
@@ -116,21 +120,23 @@ public class ListButtonBuilderService {
 
     private List<InlineKeyboardButton> buildButtonsForShowMy(List<Operation> operations, List<Long> selected, Long userId, String entityId) {
         List<InlineKeyboardButton> buttons = new ArrayList<>();
-        for (Operation operation : operations) {
-            String text = operation.getuFrom().getUser().getId().equals(userId)
-                    ? textService.buildOperationButtonText(operation)
-                    : textService.buildOperationNegativeButtonText(operation);
+        if (CollectionUtils.isNotEmpty(operations)) {
+            for (Operation operation : operations) {
+                String text = operation.getuFrom().getUser().getId().equals(userId)
+                        ? textService.buildOperationButtonText(operation)
+                        : textService.buildOperationNegativeButtonText(operation);
 
-            String callback = "selOp/" + operation.getId().toString() + "/" + entityId;
-            if (selected.contains(operation.getId())) {
-                text += " " + new String(Character.toChars(0x2705));
-                callback = callback.replace("selOp/", "dslOp/");
+                String callback = "selOp/" + operation.getId().toString() + "/" + entityId;
+                if (selected.contains(operation.getId())) {
+                    text += " " + new String(Character.toChars(0x2705));
+                    callback = callback.replace("selOp/", "dslOp/");
+                }
+
+                buttons.add(InlineKeyboardButton.builder()
+                        .text(text)
+                        .callbackData(callback)
+                        .build());
             }
-
-            buttons.add(InlineKeyboardButton.builder()
-                    .text(text)
-                    .callbackData(callback)
-                    .build());
         }
         return buttons;
     }

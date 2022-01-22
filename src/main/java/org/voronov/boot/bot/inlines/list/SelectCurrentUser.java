@@ -10,13 +10,13 @@ import org.voronov.boot.core.AbstractInlineHandler;
 import org.voronov.boot.core.InlineHandlerChanges;
 
 @Component
-public class SelectCurrentUser extends AbstractInlineHandler<ListOperationsEntity>{
+public class SelectCurrentUser extends AbstractInlineHandler<ListOperationsEntity> {
 
     @Autowired
     private ListButtonBuilderService buttonBuilder;
 
     public SelectCurrentUser() {
-        super("selCurUs", 1);
+        super("selCurUs");
     }
 
     @Override
