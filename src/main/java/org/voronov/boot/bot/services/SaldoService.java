@@ -18,6 +18,58 @@ public class SaldoService {
         entity.setSaldoAll(saldo);
     }
 
+    public Set<Operation> optimizeEntity(Set<Operation> operations) {
+        Map<UserChat, Double> userAndBalance = buildUserMap(operations);
+        Set<Operation> newOperations = new LinkedHashSet<>();
+
+        boolean saldoIsReady = false;
+
+        while (!saldoIsReady) {
+            UserChat maxUser = find(userAndBalance, Type.MAX);
+            UserChat minUser = find(userAndBalance, Type.MIN);
+
+            Double max = userAndBalance.get(maxUser);
+            Double min = userAndBalance.get(minUser);
+
+            if (max == null || min == null) {
+                break;
+            }
+
+            Operation saldo = new Operation();
+            saldo.setuFrom(maxUser);
+            saldo.setuTo(minUser);
+            saldo.setDate(new Date());
+            if (max + min > 0) {
+                saldo.setQty(Math.abs(min));
+                Double balance = userAndBalance.get(maxUser);
+                balance -= Math.abs(min);
+                userAndBalance.put(maxUser, balance);
+
+                userAndBalance.remove(minUser);
+
+            } else if (max + min <= 0) {
+                saldo.setQty(Math.abs(max));
+                Double balance = userAndBalance.get(minUser);
+                balance += Math.abs(max);
+                userAndBalance.put(minUser, balance);
+
+                userAndBalance.remove(maxUser);
+
+                if (max + min == 0) {
+                    userAndBalance.remove(minUser);
+                }
+            }
+
+            newOperations.add(saldo);
+
+            if (userAndBalance.keySet().isEmpty()) {
+                saldoIsReady = true;
+            }
+        }
+
+        return newOperations;
+    }
+
     public Set<Operation> optimizeEntity(SaldoEntity entity) {
         Collection<Operation> operationList = entity.getOperationMap().values();
         Map<UserChat, Double> userAndBalance = buildUserMap(operationList);
@@ -137,6 +189,6 @@ public class SaldoService {
 
     private enum Type {
         MAX,
-        MIN;
+        MIN
     }
 }
