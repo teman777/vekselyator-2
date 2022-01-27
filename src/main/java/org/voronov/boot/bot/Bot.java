@@ -44,6 +44,18 @@ public class Bot extends AbstractInlineCommandBot {
         }
     }
 
+    public void sendMessage(String text, Long chatId) {
+        SendMessage sm = SendMessage.builder()
+                .chatId(chatId.toString())
+                .text(text).build();
+
+        try {
+            execute(sm);
+        } catch (TelegramApiException e) {
+            logger.error(String.format("Error on sending message to chat %s with text (%s)", chatId, text), e);
+        }
+    }
+
     private void handleRetranslation(Update update) {
         if (isTranslateAllowed(update)) {
             handleTranslate(update);
