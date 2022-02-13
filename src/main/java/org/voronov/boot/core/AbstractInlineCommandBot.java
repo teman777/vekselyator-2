@@ -10,9 +10,9 @@ import java.util.Map;
 
 public abstract class AbstractInlineCommandBot extends TelegramLongPollingCommandBot {
 
-    private Map<String, AbstractInlineHandler> inlineHandlerMap = new HashMap<>();
+    private final Map<String, AbstractInlineHandler> inlineHandlerMap = new HashMap<>();
 
-    private Map<String, AbstractReplyHandler> replyHandlerMap = new HashMap<>();
+    private final Map<String, AbstractReplyHandler> replyHandlerMap = new HashMap<>();
 
     public void registerInline(AbstractInlineHandler inlineHandler) {
         inlineHandlerMap.put(inlineHandler.getInlineCommand(), inlineHandler);
@@ -44,7 +44,7 @@ public abstract class AbstractInlineCommandBot extends TelegramLongPollingComman
     public void processNonCommandUpdate(Update update) {
         if (update.hasCallbackQuery()) {
             processInline(update.getCallbackQuery());
-        } else if (update.getMessage().isReply()) {
+        } else if (update.getMessage() != null && update.getMessage().isReply()) {
             processReply(update.getMessage());
         } else {
             processNonCommandAndInlineUpdate(update);
