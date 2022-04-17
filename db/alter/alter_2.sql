@@ -1,3 +1,2 @@
-ALTER TABLE Chats CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_bin
-go
-ALTER TABLE Operations CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_bin
+alter table Chats convert to character set utf8mb4 collate utf8mb4_bin;
+alter table Operations convert to character set utf8mb4 collate utf8mb4_bin;
