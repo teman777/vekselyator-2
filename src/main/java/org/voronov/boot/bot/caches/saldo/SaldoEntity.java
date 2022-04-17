@@ -5,21 +5,24 @@ import org.voronov.boot.bot.model.dto.Operation;
 import org.voronov.boot.bot.model.dto.TgUser;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 public class SaldoEntity extends CachedEntity {
 
     private List<Operation> saldoForUser = new ArrayList<>();
 
-    private List<Operation> saldoAll = new ArrayList<>();
+    private final List<Operation> saldoAll = new ArrayList<>();
 
-    private List<Long> selectedSaldo = new ArrayList<>();
+    private final List<Long> selectedSaldo = new ArrayList<>();
 
-    private Map<Long, Operation> operationMap = new LinkedHashMap<>();
+    private final Map<Long, Operation> operationMap = new LinkedHashMap<>();
 
-    private List<TgUser> users = new ArrayList<>();
+    private final List<TgUser> users = new ArrayList<>();
 
     private Double errorBalance = 0D;
+
+    private final AtomicBoolean alreadyPerformed = new AtomicBoolean(false);
 
     public SaldoEntity(Set<Operation> operations, Set<TgUser> usersInChat, Long user) {
         super(user);
@@ -31,6 +34,14 @@ public class SaldoEntity extends CachedEntity {
         List<Operation> ops = saldoAll.stream().filter(a -> !selectedSaldo.contains(a.getId())).collect(Collectors.toList());
         ops.forEach(a -> a.setId(null));
         return ops;
+    }
+
+    public boolean getAlreadyPerformed() {
+        return alreadyPerformed.get();
+    }
+
+    public void setAlreadyPerformed(boolean performed) {
+        this.alreadyPerformed.set(performed);
     }
 
     public List<Long> getSelectedSaldo() {
@@ -67,8 +78,7 @@ public class SaldoEntity extends CachedEntity {
         saldoForUser.clear();
         saldoForUser.addAll(saldoAll.stream()
                 .filter(a -> a.getuTo().getUser().getId().equals(user)
-                        || a.getuFrom().getUser().getId().equals(user))
-                .collect(Collectors.toList()));
+                        || a.getuFrom().getUser().getId().equals(user)).toList());
 
     }
 

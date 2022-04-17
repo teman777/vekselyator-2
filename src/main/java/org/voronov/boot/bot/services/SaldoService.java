@@ -8,7 +8,6 @@ import org.voronov.boot.bot.model.dto.UserChat;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class SaldoService {
@@ -170,8 +169,7 @@ public class SaldoService {
         List<UserChat> needToRemove = userAndBalance.entrySet()
                 .stream()
                 .filter(a -> a.getValue() == null || a.getValue() == 0)
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
+                .map(Map.Entry::getKey).toList();
 
         for (UserChat uc : needToRemove) {
             userAndBalance.remove(uc);

@@ -25,11 +25,16 @@ public class SaldoPerform extends AbstractInlineHandler<SaldoEntity> {
 
     @Override
     protected InlineHandlerChanges handle(SaldoEntity entity, String id) {
-        chatService.removeWithSaldo(entity);
-        //cache.removeFromCache(UUID.fromString(id));
-        InlineKeyboardMarkup markup = buttonBuilder.buildButtons(entity, SaldoCommand.Stage.YES);
+        if (!entity.getAlreadyPerformed()) {
+            entity.setAlreadyPerformed(true);
+            chatService.removeWithSaldo(entity);
 
-        String text = "Удалено.";
-        return new InlineHandlerChanges(markup, text);
+            InlineKeyboardMarkup markup = buttonBuilder.buildButtons(entity, SaldoCommand.Stage.YES);
+
+            String text = "Удалено.";
+            return new InlineHandlerChanges(markup, text);
+        }
+
+        return null;
     }
 }

@@ -17,7 +17,7 @@ import org.voronov.boot.bot.services.ChatCache;
 
 public abstract class AbstractInlineHandler<T extends CachedEntity> {
 
-    private String inlineCommand;
+    private final String inlineCommand;
 
     private Boolean noNeedEntity = Boolean.FALSE;
 
@@ -99,6 +99,10 @@ public abstract class AbstractInlineHandler<T extends CachedEntity> {
     }
 
     private BotApiMethod buildBotApi(InlineHandlerChanges changes, CallbackQuery query) {
+        if (changes == null) {
+            return null;
+        }
+
         String chatId = query.getMessage().getChatId().toString();
         Integer messageId = query.getMessage().getMessageId();
         InlineKeyboardMarkup markup = changes.getMarkup();
