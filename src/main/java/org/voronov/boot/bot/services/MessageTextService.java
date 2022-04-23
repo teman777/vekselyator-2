@@ -1,5 +1,6 @@
 package org.voronov.boot.bot.services;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.voronov.boot.bot.caches.operations.AddOperationEntity;
@@ -25,6 +26,7 @@ public class MessageTextService {
     private static final String WRONG_USER_ADD = "Не твое дело, проходи мимо.";
     private static final String LIST_WELCOME = "Выбери, что показать.";
     private static final String SALDO_MSG_TEMPLATE_WITHOUT_BALANCE = "Взаимный расчет.";
+    private static final String SALDO_MSG_TEMPLATE_EMPTY = "Векселей нет в этом чате.";
     private static final String SALDO_MSG_TEMPLATE_WITH_BALANCE = SALDO_MSG_TEMPLATE_WITHOUT_BALANCE
             + "\nПри подсчете сальдо образовалась погрешность.\nShit happens";
 
@@ -133,11 +135,15 @@ public class MessageTextService {
     }
 
     public String buildTextForMessageSaldo(SaldoEntity entity) {
-        Double balance = entity.getErrorBalance();
-        if (balance == null || balance == 0) {
-            return SALDO_MSG_TEMPLATE_WITHOUT_BALANCE;
+        if (CollectionUtils.isNotEmpty(entity.getSaldoAll())) {
+            Double balance = entity.getErrorBalance();
+            if (balance == null || balance == 0) {
+                return SALDO_MSG_TEMPLATE_WITHOUT_BALANCE;
+            } else {
+                return SALDO_MSG_TEMPLATE_WITH_BALANCE;
+            }
         } else {
-            return SALDO_MSG_TEMPLATE_WITH_BALANCE;
+            return SALDO_MSG_TEMPLATE_EMPTY;
         }
     }
 }
