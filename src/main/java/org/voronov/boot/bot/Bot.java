@@ -44,6 +44,11 @@ public class Bot extends AbstractInlineCommandBot {
         }
     }
 
+    @Override
+    public void processOtherUpdates(Update update) {
+        logger.info("Non mapped update {}", update.toString());
+    }
+
     public void sendMessage(String text, Long chatId) {
         SendMessage sm = SendMessage.builder()
                 .chatId(chatId.toString())

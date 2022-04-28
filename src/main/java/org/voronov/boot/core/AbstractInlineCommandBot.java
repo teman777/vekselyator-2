@@ -46,10 +46,14 @@ public abstract class AbstractInlineCommandBot extends TelegramLongPollingComman
             processInline(update.getCallbackQuery());
         } else if (update.getMessage() != null && update.getMessage().isReply()) {
             processReply(update.getMessage());
-        } else {
+        } else if (update.getMessage() != null && update.getMessage().getChat() != null){
             processNonCommandAndInlineUpdate(update);
+        } else {
+            processOtherUpdates(update);
         }
     }
 
     public abstract void processNonCommandAndInlineUpdate(Update update);
+
+    public abstract void processOtherUpdates(Update update);
 }
