@@ -24,9 +24,9 @@ public class AddButtonBuilderService {
             case ADDING_TO:
                 return buildAddingTo(entity);
             case SETTING_TYPE:
-                return buildSettingType(entity);
+                return buildSettingType(entity, stage);
             case SETTING_QTY:
-                return buildSettingQty(entity);
+                return buildSettingQty(entity, stage);
             default:
                 return null;
         }
@@ -40,19 +40,19 @@ public class AddButtonBuilderService {
         return markup;
     }
 
-    private InlineKeyboardMarkup buildSettingType(AddOperationEntity entity) {
+    private InlineKeyboardMarkup buildSettingType(AddOperationEntity entity, AddOperationCommand.Stage stage) {
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> result = new ArrayList<>();
         result.add(buildTypes(entity));
-        result.add(buildOnlyCancel(entity));
+        result.add(buildPrevAndCancel(entity, stage));
         markup.setKeyboard(result);
         return markup;
     }
 
-    private InlineKeyboardMarkup buildSettingQty(AddOperationEntity entity) {
+    private InlineKeyboardMarkup buildSettingQty(AddOperationEntity entity, AddOperationCommand.Stage stage) {
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> result = new ArrayList<>();
-        result.add(buildOnlyCancel(entity));
+        result.add(buildPrevAndCancel(entity, stage));
         markup.setKeyboard(result);
         return markup;
     }
@@ -68,8 +68,13 @@ public class AddButtonBuilderService {
         return buttons;
     }
 
-    private List<InlineKeyboardButton> buildOnlyCancel(AddOperationEntity entity) {
+    private List<InlineKeyboardButton> buildPrevAndCancel(AddOperationEntity entity, AddOperationCommand.Stage stage) {
         List<InlineKeyboardButton> buttons = new ArrayList<>();
+
+        if (stage.equals(AddOperationCommand.Stage.SETTING_TYPE) || stage.equals(AddOperationCommand.Stage.SETTING_QTY)) {
+            buttons.add(buildPrevButton(entity, stage));
+        }
+
         InlineKeyboardButton cancel = new InlineKeyboardButton("Отмена");
         cancel.setCallbackData("cancel/" + entity.getId().toString());
         buttons.add(cancel);
@@ -111,4 +116,11 @@ public class AddButtonBuilderService {
 
     }
 
+    private InlineKeyboardButton buildPrevButton(AddOperationEntity entity, AddOperationCommand.Stage stage) {
+        String numOfCommand = stage.equals(AddOperationCommand.Stage.SETTING_TYPE) ? "1" : "2";
+        return InlineKeyboardButton.builder()
+                .text("Назад")
+                .callbackData("prev/" + numOfCommand + "/" + entity.getId().toString())
+                .build();
+    }
 }

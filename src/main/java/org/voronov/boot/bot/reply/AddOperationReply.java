@@ -43,7 +43,7 @@ public class AddOperationReply extends AbstractReplyHandler {
         String comment = text.replaceFirst("\\d+\\.?\\d*\\s?", "");
         Double qty = Double.valueOf(onlyQty);
 
-        String id = message.getReplyToMessage().getReplyMarkup().getKeyboard().get(0).get(0).getCallbackData().split("/")[1];
+        String id = message.getReplyToMessage().getReplyMarkup().getKeyboard().get(0).get(0).getCallbackData().split("/")[2];
         AddOperationEntity entity = cache.getFromCache(UUID.fromString(id));
 
         if (message.getFrom().getId() == entity.getFrom()) {
