@@ -71,8 +71,8 @@ public class MessageTextService {
         AddOperationEntity.Type type = entity.getType();
         if (type != AddOperationEntity.Type.FOR_ONE) {
             String msg = type == AddOperationEntity.Type.DIVIDE_TO_ALL
-                    ? "делить введенную сумму на всех\n"
-                    : "вся введенная сумма каждому пользователю\n";
+                    ? "делим на всех\n"
+                    : "с каждого по\n";
             sb.append("*Тип:* ").append(msg);
         }
 
