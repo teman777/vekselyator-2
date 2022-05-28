@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.voronov.boot.bot.caches.operations.AddOperationEntity;
 import org.voronov.boot.bot.commands.AddOperationCommand;
+import org.voronov.boot.bot.services.MessageTextService;
 import org.voronov.boot.bot.services.buttons.AddButtonBuilderService;
 import org.voronov.boot.core.AbstractInlineHandler;
 import org.voronov.boot.core.InlineHandlerChanges;
@@ -14,6 +15,9 @@ public class SetTypeInline extends AbstractInlineHandler<AddOperationEntity> {
 
     @Autowired
     private AddButtonBuilderService buttonBuilder;
+
+    @Autowired
+    private MessageTextService msgService;
 
     public SetTypeInline() {
         super("settype");
@@ -27,6 +31,6 @@ public class SetTypeInline extends AbstractInlineHandler<AddOperationEntity> {
             entity.setType(AddOperationEntity.Type.NOT_DIVIDE);
         }
         InlineKeyboardMarkup markup = buttonBuilder.buildButtons(entity, AddOperationCommand.Stage.SETTING_QTY);
-        return new InlineHandlerChanges(markup, "Ответь на сообщение в формате \"Сумма комментарий\"");
+        return new InlineHandlerChanges(markup, msgService.buildStringForSettingTypeOperation(entity));
     }
 }

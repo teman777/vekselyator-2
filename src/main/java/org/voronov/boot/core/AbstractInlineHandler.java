@@ -118,6 +118,7 @@ public abstract class AbstractInlineHandler<T extends CachedEntity> {
                     .chatId(chatId)
                     .messageId(messageId)
                     .text(newText)
+                    .parseMode("markdown")
                     .replyMarkup(markup)
                     .build();
         } else if (changes.isDeleteMsg()) {

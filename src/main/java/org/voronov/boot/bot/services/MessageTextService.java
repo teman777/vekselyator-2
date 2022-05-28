@@ -61,6 +61,25 @@ public class MessageTextService {
         return String.format(format, fromBrief, toString, qty, entity.getComment() != null ? entity.getComment() : "");
     }
 
+    public String buildStringForSettingTypeOperation(AddOperationEntity entity) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("*Параметры векселя*\n");
+        sb.append("*На кого:* ");
+        List<String> usrs = entity.getToUsers().stream().map(TgUser::getBrief).toList();
+        sb.append(buildStringTo(usrs));
+        sb.append("\n");
+        AddOperationEntity.Type type = entity.getType();
+        if (type != AddOperationEntity.Type.FOR_ONE) {
+            String msg = type == AddOperationEntity.Type.DIVIDE_TO_ALL
+                    ? "делить введенную сумму на всех\n"
+                    : "вся введенная сумма каждому пользователю\n";
+            sb.append("*Тип:* ").append(msg);
+        }
+
+        sb.append("\nДля добавления векселя ответьте на это сообщение в формате \"Сумма комментарий\"");
+        return sb.toString();
+    }
+
     private String buildStringTo(List<String> briefs) {
         StringBuilder sb = new StringBuilder();
         for (Iterator<String> iterator = briefs.iterator(); iterator.hasNext(); ) {
