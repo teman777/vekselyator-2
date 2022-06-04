@@ -1,5 +1,10 @@
 package org.voronov.boot.bot.services;
 
+import com.google.common.graph.MutableValueGraph;
+import com.google.common.graph.ValueGraph;
+import com.google.common.graph.ValueGraphBuilder;
+import org.apache.catalina.User;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.voronov.boot.bot.caches.saldo.SaldoEntity;
 import org.voronov.boot.bot.model.dto.Operation;
@@ -8,12 +13,15 @@ import org.voronov.boot.bot.model.dto.UserChat;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 @Service
 public class SaldoService {
 
     public void optimize(SaldoEntity entity) {
         Set<Operation> saldo = optimizeEntity(entity);
+        considerWhatShouldBeDeleted(entity);
         entity.setSaldoAll(saldo);
     }
 
@@ -125,6 +133,47 @@ public class SaldoService {
         return newOperations;
     }
 
+    public Set<Operation> considerWhatShouldBeDeleted(SaldoEntity entity) {
+        List<Operation> selectedSaldo = entity.getSaldoAll().stream()
+                .filter(a -> entity.getSelectedSaldo().contains(a.getId()))
+                .toList();
+        Map<Key, Double> dummySaldo = buildDummySaldoMap(entity.getOperationMap().values());
+        ValueGraph<UserChat, Double> graph = buildGraph(dummySaldo);
+        return null;
+    }
+
+    private ValueGraph<UserChat, Double> buildGraph(Map<Key, Double> dummySaldo) {
+        MutableValueGraph<UserChat, Double> graph = ValueGraphBuilder.directed().build();
+        dummySaldo.entrySet().forEach(a -> {
+            Key key = a.getKey();
+            Double val = a.getValue();
+            graph.putEdgeValue(key.getFirst(), key.getSecond(), val);
+        });
+
+        return graph;
+    }
+
+    private Map<Key, Double> buildDummySaldoMap(Collection<Operation> operations) {
+        Map<Key, Double> result = new HashMap<>();
+        for (Operation operation : operations) {
+            UserChat first = operation.getuFrom();
+            UserChat second = operation.getuTo();
+
+            Double value = operation.getQty();
+
+            Key key = new Key(first, second);
+
+            if (result.containsKey(key.inverse())) {
+                result.computeIfPresent(key.inverse(), (key1, aDouble) -> aDouble - value);
+            } else if (result.containsKey(key)) {
+                result.computeIfPresent(key, (key1, aDouble) -> aDouble + value);
+            } else {
+                result.put(key, value);
+            }
+        }
+        return result;
+    }
+
     private static UserChat find(Map<UserChat, Double> map, Type type) {
         Double findedQty = 0d;
         UserChat findedUser = null;
@@ -188,5 +237,40 @@ public class SaldoService {
     private enum Type {
         MAX,
         MIN
+    }
+
+    private static class Key {
+        UserChat first;
+        UserChat second;
+
+        public Key(@NonNull UserChat first, @NonNull UserChat second) {
+            this.first = first;
+            this.second = second;
+        }
+
+        public UserChat getFirst() {
+            return first;
+        }
+
+        public UserChat getSecond() {
+            return second;
+        }
+
+        public Key inverse() {
+            return new Key(second, first);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof Key)) return false;
+            Key key = (Key) o;
+            return first.equals(key.first) && second.equals(key.second);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(first, second);
+        }
     }
 }
