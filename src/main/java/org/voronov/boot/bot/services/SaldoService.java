@@ -1,9 +1,6 @@
 package org.voronov.boot.bot.services;
 
-import com.google.common.graph.MutableValueGraph;
-import com.google.common.graph.ValueGraph;
-import com.google.common.graph.ValueGraphBuilder;
-import org.apache.catalina.User;
+import org.jgrapht.graph.DefaultDirectedWeightedGraph;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.voronov.boot.bot.caches.saldo.SaldoEntity;
@@ -13,15 +10,12 @@ import org.voronov.boot.bot.model.dto.UserChat;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
-import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
 @Service
 public class SaldoService {
 
     public void optimize(SaldoEntity entity) {
         Set<Operation> saldo = optimizeEntity(entity);
-        considerWhatShouldBeDeleted(entity);
         entity.setSaldoAll(saldo);
     }
 
@@ -137,21 +131,40 @@ public class SaldoService {
         List<Operation> selectedSaldo = entity.getSaldoAll().stream()
                 .filter(a -> entity.getSelectedSaldo().contains(a.getId()))
                 .toList();
+
         Map<Key, Double> dummySaldo = buildDummySaldoMap(entity.getOperationMap().values());
-        ValueGraph<UserChat, Double> graph = buildGraph(dummySaldo);
+
+        DefaultDirectedWeightedGraph<UserChat, Double> graph = buildGraph(dummySaldo);
+
         return null;
     }
 
-    private ValueGraph<UserChat, Double> buildGraph(Map<Key, Double> dummySaldo) {
-        MutableValueGraph<UserChat, Double> graph = ValueGraphBuilder.directed().build();
-        dummySaldo.entrySet().forEach(a -> {
-            Key key = a.getKey();
-            Double val = a.getValue();
-            graph.putEdgeValue(key.getFirst(), key.getSecond(), val);
+
+    private DefaultDirectedWeightedGraph<UserChat, Double> buildGraph(Map<Key, Double> dummySaldo) {
+        DefaultDirectedWeightedGraph<UserChat, Double> graph = new DefaultDirectedWeightedGraph<>(Double.class);
+        dummySaldo.forEach((key, value) -> {
+            UserChat first = key.getFirst();
+            UserChat second = key.getSecond();
+            initVertex(graph, key);
+            graph.addEdge(first, second, value);
         });
 
         return graph;
     }
+
+    private void initVertex(DefaultDirectedWeightedGraph<UserChat, Double> graph, Key key) {
+        UserChat first = key.getFirst();
+        UserChat second = key.getSecond();
+
+        if (!graph.containsVertex(first)) {
+            graph.addVertex(first);
+        }
+
+        if (!graph.containsVertex(second)) {
+            graph.addVertex(second);
+        }
+    }
+
 
     private Map<Key, Double> buildDummySaldoMap(Collection<Operation> operations) {
         Map<Key, Double> result = new HashMap<>();
