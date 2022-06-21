@@ -21,6 +21,7 @@ public class MessageTextService {
     private static final String ADD_OPERATION_TEMPLATE_SOLO_NOT_SOLO = "Вексель добавлен.\n%s одолжил %s по %.2fр.\n%s";
     private static final String OPERATION_TEMPLATE = "%s -> %s (%.2f) %s\n";
     private static final String SALDO_TEMPLATE = "%s -> %s (%.2f)";
+    private static final String SALDO_TEMPLATE_SCHEDULER = "@%s -> @%s (%.2f)";
     private static final String OPERATION_BUTTON_TEMPLATE = "%.2f %s";
     private static final String OPERATION_BUTTON_NEGATIVE_TEMPLATE = "-%.2f %s";
     private static final String WRONG_USER_ADD = "Не твое дело, проходи мимо.";
@@ -151,6 +152,10 @@ public class MessageTextService {
 
     public String buildTextForSaldo(Operation operation) {
         return String.format(SALDO_TEMPLATE, operation.getuTo().getUser().getBrief(), operation.getuFrom().getUser().getBrief(), operation.getQty());
+    }
+
+    public String buildTextForSaldoScheduler(Operation operation) {
+        return String.format(SALDO_TEMPLATE_SCHEDULER, operation.getuTo().getUser().getBrief(), operation.getuFrom().getUser().getBrief(), operation.getQty());
     }
 
     public String buildTextForMessageSaldo(SaldoEntity entity) {

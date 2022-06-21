@@ -37,7 +37,7 @@ public class SchedulerService {
             if (CollectionUtils.isNotEmpty(optimized)) {
                 StringBuilder sb = new StringBuilder("Баланс на сегодня\n");
                 for (Operation operation : optimized) {
-                    sb.append(textService.buildTextForSaldo(operation)).append("\n");
+                    sb.append(textService.buildTextForSaldoScheduler(operation)).append("\n");
                 }
                 bot.sendMessage(sb.toString(), chat.getId());
             }
