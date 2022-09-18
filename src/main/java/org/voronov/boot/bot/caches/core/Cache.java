@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class Cache<T extends CachedEntity> {
-    private ConcurrentHashMap<UUID, T> cacheMap;
+    private final ConcurrentHashMap<UUID, T> cacheMap;
 
     public Cache() {
         cacheMap = new ConcurrentHashMap<>();

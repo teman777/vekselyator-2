@@ -7,6 +7,10 @@ services:
       - "3306:3306"
     volumes:
       - ./db/data_volume:/var/lib/mysql
+    ulimits:
+      nofile:
+        soft: "65536"
+        hard: "65536"
 
   backend:
     build: ./

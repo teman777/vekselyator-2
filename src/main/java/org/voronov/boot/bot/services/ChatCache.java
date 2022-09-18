@@ -29,12 +29,7 @@ public class ChatCache {
     }
 
     public Optional<TgChat> findChat(Long id) {
-        TgChat chat = cache.get(id);
-        if (chat == null) {
-            return Optional.empty();
-        } else {
-            return Optional.of(chat);
-        }
+        return Optional.ofNullable(cache.get(id));
     }
 
     public void updateChat(Long id) {

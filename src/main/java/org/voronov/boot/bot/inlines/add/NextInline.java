@@ -24,12 +24,11 @@ public class NextInline extends AbstractInlineHandler<AddOperationEntity> {
         AddOperationCommand.Stage stage = entity.getTo().size() > 1
                 ? AddOperationCommand.Stage.SETTING_TYPE
                 : AddOperationCommand.Stage.SETTING_QTY;
-        String msg;
-        if (stage == AddOperationCommand.Stage.SETTING_TYPE) {
-            msg = "Выбери тип векселя";
-        } else {
-            msg = "Ответь на сообщение в формате \"Сумма комментарий\"";
-        }
+
+        String msg = stage == AddOperationCommand.Stage.SETTING_TYPE
+                ? "Выбери тип векселя"
+                : "Ответь на сообщение в формате \"Сумма комментарий\"";
+
         InlineKeyboardMarkup buttons = buttonBuilder.buildButtons(entity, stage);
         return new InlineHandlerChanges(buttons, msg);
     }
